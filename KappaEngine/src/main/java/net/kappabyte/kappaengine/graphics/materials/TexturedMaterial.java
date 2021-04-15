@@ -1,0 +1,44 @@
+package net.kappabyte.kappaengine.graphics.materials;
+
+import java.nio.FloatBuffer;
+
+import org.lwjgl.opengl.GL30;
+import org.lwjgl.system.MemoryUtil;
+
+import net.kappabyte.kappaengine.graphics.RenderData;
+import net.kappabyte.kappaengine.graphics.ShaderProgram;
+import net.kappabyte.kappaengine.graphics.Texture;
+import net.kappabyte.kappaengine.util.Log;
+
+public abstract class TexturedMaterial extends Material {
+
+    private Texture texture;
+
+    public TexturedMaterial(Texture texture) {
+        this.texture = texture;
+
+        createVBO(); //Creates vbo for textureCoords
+
+        getShaderProgram().createUniform("texture_sampler");
+    }
+
+	@Override
+	public void setRenderData(RenderData data) {
+        getShaderProgram().setUniform("texture_sampler", 0);
+        fillVBODataFloat(data.getMesh().getUVs(), 0, 2);
+	}
+
+    public void setTexture(Texture texture) {
+        this.texture = texture;
+    }
+
+    @Override
+	public void render(RenderData data) {
+        // Activate first texture unit
+        GL30.glActiveTexture(GL30.GL_TEXTURE0);
+        // Bind the texture
+        //Log.debug("GL Texture ID: " + texture.getGlTextureID());
+        GL30.glBindTexture(GL30.GL_TEXTURE_2D, texture.getGlTextureID());
+	}
+
+}

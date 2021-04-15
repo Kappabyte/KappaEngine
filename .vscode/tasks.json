@@ -1,0 +1,38 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "command": "bash",
+    "tasks": [
+        {
+            "label": "Build Sandbox",
+            "type": "shell",
+            "command": "& mvn install -f KappaEngine\\pom.xml; & mvn.cmd install -f Sandbox\\pom.xml",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Build and Run Sandbox",
+            "type": "shell",
+            "command": "& mvn install -f KappaEngine\\pom.xml; & mvn.cmd install -f Sandbox\\pom.xml;java -jar ./Sandbox/target/Sandbox-1.0-SNAPSHOT-jar-with-dependencies.jar",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },{
+            "label": "Run Sandbox",
+            "type": "shell",
+            "command": "java -jar ./Sandbox/target/Sandbox-1.0-SNAPSHOT-jar-with-dependencies.jar",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
+//
