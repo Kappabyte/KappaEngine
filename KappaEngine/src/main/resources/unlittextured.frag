@@ -1,6 +1,6 @@
-#version 330
+#version 130
 
-in  vec2 outTexCoord;
+in vec2 outTexCoord;
 out vec4 fragColor;
 
 uniform sampler2D texture_sampler;

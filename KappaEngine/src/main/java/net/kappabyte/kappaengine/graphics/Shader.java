@@ -42,6 +42,10 @@ public abstract class Shader {
         if (GL20.glGetShaderi(shader, GL20.GL_COMPILE_STATUS) == 0) {
             Log.info(source);
             Log.error("Failed to compile shader: " + file);
+            //try get get the error
+            String log = GL20.glGetShaderInfoLog(shader);
+            Log.debug("A full walktrhough of the shader compilation error can be seen below:");
+            Log.debug(log);
             return shader;
         }
 

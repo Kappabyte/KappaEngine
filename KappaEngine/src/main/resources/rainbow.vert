@@ -1,6 +1,9 @@
-#version 330
+#version 130
 
-layout (location =0) in vec3 position;
+in vec3 position;
+in vec3 inColour;
+
+out vec3 exColour;
 
 uniform mat4 projectionMatrix;
 uniform mat4 modelViewMatrix;

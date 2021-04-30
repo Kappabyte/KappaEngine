@@ -7,7 +7,7 @@
         {
             "label": "Build Sandbox",
             "type": "shell",
-            "command": "& mvn install -f KappaEngine\\pom.xml; & mvn.cmd install -f Sandbox\\pom.xml",
+            "command": "mvn install -f KappaEngine\\pom.xml; mvn.cmd install -f Sandbox\\pom.xml",
             "problemMatcher": [],
             "group": {
                 "kind": "build",
@@ -17,7 +17,7 @@
         {
             "label": "Build and Run Sandbox",
             "type": "shell",
-            "command": "& mvn install -f KappaEngine\\pom.xml; & mvn.cmd install -f Sandbox\\pom.xml;java -jar ./Sandbox/target/Sandbox-1.0-SNAPSHOT-jar-with-dependencies.jar",
+            "command": "mvn install -f ./KappaEngine/pom.xml; mvn install -f ./Sandbox/pom.xml; java -jar ./Sandbox/target/Sandbox-1.0-SNAPSHOT-jar-with-dependencies.jar",
             "problemMatcher": [],
             "group": {
                 "kind": "build",

@@ -105,4 +105,7 @@ public class ShaderProgram {
         }
         GL30.glUniform3f(uniforms.get(uniformName), x, y, z);
     }
+    public int getProgramID() {
+        return programID;
+    }
 }
