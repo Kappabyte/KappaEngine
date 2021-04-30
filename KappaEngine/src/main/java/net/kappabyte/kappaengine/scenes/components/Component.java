@@ -1,8 +1,9 @@
 package net.kappabyte.kappaengine.scenes.components;
 
 import net.kappabyte.kappaengine.scenes.GameObject;
+import net.kappabyte.kappaengine.scenes.Scene;
 import net.kappabyte.kappaengine.scenes.Transform;
-import net.kappabyte.kappaengine.util.Log;
+import net.kappabyte.kappaengine.window.Window;
 
 public abstract class Component {
 
@@ -21,6 +22,14 @@ public abstract class Component {
 
     public final Transform getTransform() {
         return gameObject.getTransform();
+    }
+
+    public final Scene getScene() {
+        return gameObject.getScene();
+    }
+
+    public final Window getWindow() {
+        return gameObject.getScene().getWindow();
     }
 
     public abstract void onStart();

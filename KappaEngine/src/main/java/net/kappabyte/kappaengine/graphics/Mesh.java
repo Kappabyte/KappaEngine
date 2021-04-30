@@ -1,27 +1,33 @@
 package net.kappabyte.kappaengine.graphics;
 
 public class Mesh {
-    private float[] verticies;
+    private float[] vertices;
+    private float[] normals;
     private float[] uvs;
-    private int[] indicies;
+    private int[] indices;
 
-    public Mesh(float[] verticies, int[] indicies, float[] uvs) {
-        this.verticies = verticies;
-        this.indicies = indicies;
+    public Mesh(float[] vertices, int[] indices, float[] normals, float[] uvs) {
+        this.vertices = vertices;
+        this.indices = indices;
+        this.normals = normals;
         this.uvs = uvs;
     }
 
-    public void setVerticiesAndIndicies(float[] verticies, int[] indicies) {
-        this.verticies = verticies;
-        this.indicies = indicies;
+    public void setVerticesAndIndices(float[] verticies, int[] indicies) {
+        this.vertices = verticies;
+        this.indices = indicies;
     }
 
-    public float[] getVerticies() {
-        return verticies;
+    public float[] getVertices() {
+        return vertices;
+    }
+
+    public float[] getNormals() {
+        return normals;
     }
 
     public int[] getIndicies() {
-        return indicies;
+        return indices;
     }
 
     public float[] getUVs() {

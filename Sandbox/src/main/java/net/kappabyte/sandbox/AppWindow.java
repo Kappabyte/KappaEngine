@@ -1,22 +1,15 @@
 package net.kappabyte.sandbox;
 
-import java.io.File;
-import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
-
 import org.joml.Vector3f;
 
-import net.kappabyte.kappaengine.graphics.FragmentShader;
 import net.kappabyte.kappaengine.graphics.Texture;
-import net.kappabyte.kappaengine.graphics.VertexShader;
 import net.kappabyte.kappaengine.graphics.materials.RainbowMaterial;
 import net.kappabyte.kappaengine.graphics.materials.UnitTexturedMaterial;
 import net.kappabyte.kappaengine.scenes.GameObject;
-import net.kappabyte.kappaengine.scenes.components.CubeRender;
 import net.kappabyte.kappaengine.scenes.components.Camera;
-import net.kappabyte.kappaengine.util.Log;
+import net.kappabyte.kappaengine.scenes.components.CubeRender;
 import net.kappabyte.kappaengine.window.Window;
+import net.kappabyte.sandbox.components.CharacterController;
 import net.kappabyte.sandbox.components.Spin;
 
 public class AppWindow extends Window {
@@ -31,23 +24,27 @@ public class AppWindow extends Window {
 
     @Override
     protected void onWindowReady() {
-        GameObject camera = new GameObject();
-        camera.add(new Camera(this));
-        getScene().add(camera);
+        GameObject player = new GameObject("Player");
+        GameObject camera = new GameObject("Camera");
+        player.addChild(camera);
+        camera.addComponent(new Camera(this));
+        player.addComponent(new CharacterController(camera));
+        getScene().addGameObject(player);
         getScene().setActiveCamera(camera.GetComponent(Camera.class));
 
-        GameObject cubeA = new GameObject();
-        cubeA.add(new CubeRender(cubeA, new UnitTexturedMaterial(new Texture("cube_texture.png"))));
+        GameObject cubeA = new GameObject("Cube A");
+        cubeA.addComponent(new CubeRender(cubeA, new UnitTexturedMaterial(new Texture("cube_texture.png"))));
+        cubeA.addComponent(new Spin(1));
         //object.add(new CubeRender(object, new RainbowMaterial()));
-        cubeA.add(new Spin(1));
-        getScene().add(cubeA);
+        getScene().addGameObject(cubeA);
         cubeA.getTransform().setPosition(new Vector3f(-3, 0, -5));
 
-        GameObject cubeB = new GameObject();
-        cubeB.add(new CubeRender(cubeB, new RainbowMaterial()));
-        cubeB.add(new Spin(2));
-        getScene().add(cubeB);
-        cubeB.getTransform().setPosition(new Vector3f(3, 0, -5));
+        GameObject cubeB = new GameObject("Cube B");
+        cubeB.addComponent(new CubeRender(cubeB, new RainbowMaterial()));
+        cubeA.addChild(cubeB);
+        cubeB.getTransform().setPosition(new Vector3f(0, 2, 0));
+
+        getScene().printSceneHeirarchy(0, getScene().getChildren());
     }
 
 }

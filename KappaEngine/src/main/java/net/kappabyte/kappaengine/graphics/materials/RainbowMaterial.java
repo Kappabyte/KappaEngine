@@ -4,7 +4,6 @@ import net.kappabyte.kappaengine.graphics.FragmentShader;
 import net.kappabyte.kappaengine.graphics.RenderData;
 import net.kappabyte.kappaengine.graphics.ShaderProgram;
 import net.kappabyte.kappaengine.graphics.VertexShader;
-import net.kappabyte.kappaengine.util.Log;
 
 public class RainbowMaterial extends Material {
 
@@ -12,6 +11,7 @@ public class RainbowMaterial extends Material {
 
     static {
         program = new ShaderProgram(new VertexShader(RainbowMaterial.class.getResourceAsStream("/rainbow.vert")), new FragmentShader(RainbowMaterial.class.getResourceAsStream("/rainbow.frag")));
+        program.createUniform("colour");
     }
 
     public RainbowMaterial() {
@@ -30,25 +30,9 @@ public class RainbowMaterial extends Material {
         float brightness = 0.5f; //brightness
 
         float[] myRGBColor = hslColor(hue, saturation, brightness);
-        float[] colours = new float[]{
-            myRGBColor[0], myRGBColor[1], myRGBColor[2],
-            myRGBColor[0], myRGBColor[1], myRGBColor[2],
-            myRGBColor[0], myRGBColor[1], myRGBColor[2],
-            myRGBColor[0], myRGBColor[1], myRGBColor[2],
-            myRGBColor[0], myRGBColor[1], myRGBColor[2],
-            myRGBColor[0], myRGBColor[1], myRGBColor[2],
-            myRGBColor[0], myRGBColor[1], myRGBColor[2],
-            myRGBColor[0], myRGBColor[1], myRGBColor[2],};
-        colours = new float[]{
-            0f, 1f, 0f,
-            0f, 1f, 0f,
-            0f, 1f, 0f,
-            0f, 1f, 0f,
-            0f, 1f, 0f,
-            0f, 1f, 0f,
-            0f, 1f, 0f,
-            0f, 1f, 0f,};
-        fillVBODataFloat(colours, 0);
+        float[] colours = new float[]{myRGBColor[0], myRGBColor[1], myRGBColor[2]};
+
+        program.setUniform("colour", colours[0], colours[1], colours[2]);
     }
 
     @Override

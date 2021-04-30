@@ -1,28 +1,40 @@
 package net.kappabyte.kappaengine.scenes;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.joml.Vector3f;
 
 import net.kappabyte.kappaengine.scenes.components.Component;
-import net.kappabyte.kappaengine.util.Log;
+import net.kappabyte.kappaengine.util.ReflectionUtil;
 
-public class GameObject implements Collection<Component> {
+public class GameObject implements Parent {
+    private String name;
+
     private Transform transform;
     private ArrayList<Component> objectComponents = new ArrayList<>();
+    private ArrayList<GameObject> children = new ArrayList<>();
 
-    private Scene scene;
+    private Parent parent;
 
-    public GameObject() {
+    public GameObject(String name) {
+        this.name = name;
+
         transform = new Transform(new Vector3f(), new Vector3f(), new Vector3f(1,1,1));
+        try {
+            ReflectionUtil.setPrivateFieldValue(Component.class.getDeclaredField("gameObject"), transform, this);
+        } catch (NoSuchFieldException | SecurityException e) {
+            e.printStackTrace();
+        }
     }
 
     public Transform getTransform() {
         return transform;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public final <T extends Component> T GetComponent(Class<T> clazz) {
@@ -46,110 +58,94 @@ public class GameObject implements Collection<Component> {
         return valid;
     }
 
+    public final <T extends Component> Collection<T> GetComponentsInChildren(Class<T> clazz) {
+        List<T> valid = new ArrayList<>();
+        for(Component component : objectComponents) {
+            if(clazz.isInstance(component)) {
+                valid.add(clazz.cast(component));
+            }
+        }
+
+        for(GameObject object : children) {
+            valid.addAll(object.GetComponentsInChildren(clazz));
+        }
+
+        return valid;
+    }
+
     public final Scene getScene() {
-        return scene;
+        if(parent == null) return null;
+
+        if(parent instanceof Scene) {
+            return (Scene) parent;
+        }
+
+        if(parent instanceof GameObject) {
+            return ((GameObject) parent).getScene();
+        }
+
+        return null;
     }
 
-    @Override
-    public int size() {
-        return objectComponents.size();
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return objectComponents.isEmpty();
-    }
-
-    @Override
-    public boolean contains(Object o) {
-        return objectComponents.contains(o);
-    }
-
-    @Override
-    public Iterator<Component> iterator() {
-        return objectComponents.iterator();
-    }
-
-    @Override
-    public Object[] toArray() {
-        return objectComponents.toArray();
-    }
-
-    @Override
-    public <T> T[] toArray(T[] a) {
-        return objectComponents.toArray(a);
-    }
-
-    @Override
-    public boolean add(Component e) {
-        setComponentGameObject(e, this);
+    public boolean addComponent(Component e) {
+        try {
+            ReflectionUtil.setPrivateFieldValue(Component.class.getDeclaredField("gameObject"), e, this);
+        } catch (NoSuchFieldException | SecurityException e1) {
+            e1.printStackTrace();
+        }
         e.onStart();
         return objectComponents.add(e);
     }
 
-    @Override
-    public boolean remove(Object o) {
+    public boolean removeComponent(Object o) {
         if(o instanceof Component) {
             ((Component)o).onDestroy();
-            setComponentGameObject((Component) o, null);
+            try {
+                ReflectionUtil.setPrivateFieldValue(Component.class.getDeclaredField("gameObject"), o, null);
+            } catch (NoSuchFieldException | SecurityException e) {
+                e.printStackTrace();
+            }
         }
         return objectComponents.remove(o);
     }
 
-    @Override
-    public boolean containsAll(Collection<?> c) {
-        return objectComponents.containsAll(c);
-    }
-
-    @Override
-    public boolean addAll(Collection<? extends Component> c) {
-        for(Component component : c) {
-            setComponentGameObject(component, this);
-            component.onStart();
-        }
-        return objectComponents.addAll(c);
-    }
-
-    @Override
-    public boolean removeAll(Collection<?> c) {
-        for(Object o : c) {
-            if(o instanceof Component) {
-                ((Component)o).onDestroy();
-                setComponentGameObject((Component) o, null);
+    public void setParent(Parent parent) {
+        if(this.parent != null) {
+            if(parent instanceof GameObject) {
+                ((GameObject) this.parent).children.remove(this);
+            } else if(parent instanceof Scene) {
+                ((Scene) this.parent).gameObjects.remove(this);
             }
         }
-        return objectComponents.removeAll(c);
+
+        this.parent = parent;
+        if(parent instanceof GameObject) {
+            ((GameObject) parent).children.add(this);
+        } else if(parent instanceof Scene) {
+            ((Scene) parent).gameObjects.add(this);
+        }
     }
 
-    @Override
-    public boolean retainAll(Collection<?> c) {
-        for(Component component : objectComponents) {
-            if(!c.contains(component)) {
-                component.onDestroy();
-                setComponentGameObject(component, null);
-            }
-        }
-        return objectComponents.retainAll(c);
+    public void addChild(GameObject child) {
+        child.setParent(this);
     }
 
-    @Override
-    public void clear() {
-        for(Component component : objectComponents) {
-            component.onDestroy();
-            setComponentGameObject(component, null);
-        }
-        objectComponents.clear();
+    public Parent getParent() {
+        return parent;
     }
-    
-    private void setComponentGameObject(Component component, GameObject gameObject) {
-        try {
-            Field field = Component.class.getDeclaredField("gameObject");
-            field.setAccessible(true);
-            field.set(component, gameObject);
-            Log.debug("Added component " + component + " to gameObect " + gameObject);
-        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-            Log.error("failed to set gameObject for component!");
-            e.printStackTrace();
+
+    public GameObject getParentGameObject() {
+        if(parent instanceof GameObject) {
+            return (GameObject) parent;
         }
+
+        return null;
+    }
+
+    public GameObject[] getChildren() {
+        GameObject[] children = new GameObject[this.children.size()];
+        children = this.children.toArray(children);
+
+        return children;
     }
 }

@@ -1,7 +1,5 @@
 package net.kappabyte.kappaengine.math;
 
-import net.kappabyte.kappaengine.util.Log;
-
 public class Time {
 
     static long lastFrame;
@@ -35,7 +33,6 @@ public class Time {
 
     private static void updateFPS() {
         if (getTime() - lastFPS > 1000) {
-            Log.info("FPS: " + fps);
             fps = 0;
             lastFPS += 1000;
         }

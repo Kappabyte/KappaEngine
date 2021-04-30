@@ -1,9 +1,10 @@
 package net.kappabyte.kappaengine.scenes.components;
 
+import static org.lwjgl.system.MemoryUtil.memFree;
+
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.system.MemoryUtil;
 
@@ -12,9 +13,6 @@ import net.kappabyte.kappaengine.graphics.materials.Material;
 import net.kappabyte.kappaengine.scenes.GameObject;
 import net.kappabyte.kappaengine.util.Log;
 import net.kappabyte.kappaengine.util.Profiling;
-import org.joml.Matrix4f;
-
-import static org.lwjgl.system.MemoryUtil.*;
 
 public abstract class Renderable extends Component {
 
@@ -26,7 +24,7 @@ public abstract class Renderable extends Component {
     public Renderable(GameObject gameObject, Material material, boolean staticGeometry) {
         super();
         this.material = material;
-        
+
         this.staticGeometry = staticGeometry;
     }
 
@@ -51,13 +49,15 @@ public abstract class Renderable extends Component {
     }
 
     protected void updateVBOs(RenderData data) {
-        Profiling.startTimer();
-        
+        Profiling.startTimer("VBO Update");
+
         //Modify data to be readble by openGL
-        FloatBuffer verticesBuffer = MemoryUtil.memAllocFloat(data.getMesh().getVerticies().length);
-        verticesBuffer.put(data.getMesh().getVerticies()).flip();
+        FloatBuffer verticesBuffer = MemoryUtil.memAllocFloat(data.getMesh().getVertices().length);
+        verticesBuffer.put(data.getMesh().getVertices()).flip();
         IntBuffer indiciesBuffer = MemoryUtil.memAllocInt(data.getMesh().getIndicies().length);
         indiciesBuffer.put(data.getMesh().getIndicies()).flip();
+        FloatBuffer normalsBuffer = MemoryUtil.memAllocFloat(data.getMesh().getNormals().length);
+        normalsBuffer.put(data.getMesh().getNormals()).flip();
 
         //Bind all the stuff
         GL30.glBindVertexArray(vao);
@@ -74,10 +74,10 @@ public abstract class Renderable extends Component {
         GL30.glBindBuffer(GL30.GL_ELEMENT_ARRAY_BUFFER, indiciesVBO);
         GL30.glBufferData(GL30.GL_ELEMENT_ARRAY_BUFFER, indiciesBuffer, GL30.GL_STATIC_DRAW);
         memFree(indiciesBuffer);
-        Profiling.stopTimer("Update VBOs");
+        Profiling.stopTimer("VBO Update");
 
         //Material data
-        Profiling.startTimer();
+        Profiling.startTimer("Material Render");
         data.getMaterial().setRenderData(data);
         Profiling.stopTimer("Material Render");
 
@@ -88,6 +88,7 @@ public abstract class Renderable extends Component {
     }
 
     public void Render() {
+        Profiling.startTimer("Full Render");
         //Get the render data and bind the shader
         RenderData data = supplyRenderData();
         data.getShaderProgram().bind();
@@ -96,8 +97,8 @@ public abstract class Renderable extends Component {
         if(staticGeometry) {
             updateVBOs(data);
         }
-        
-        Profiling.startTimer();
+
+        Profiling.startTimer("Render");
         //Update matricies
         data.getShaderProgram().setUniform("modelViewMatrix", data.getTransform().getModelViewMatrix(data.getCamera().getViewMatrix()));
         data.getShaderProgram().setUniform("projectionMatrix", data.getCamera().getProjectionMatrix());
@@ -122,6 +123,7 @@ public abstract class Renderable extends Component {
         //Unbind the shader, which will be used next render call
         data.getShaderProgram().unbind();
         Profiling.stopTimer("Render");
+        Profiling.stopTimer("Full Render");
     }
 
     public final void Cleanup() {

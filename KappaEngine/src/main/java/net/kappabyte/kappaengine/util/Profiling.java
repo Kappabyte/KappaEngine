@@ -5,25 +5,27 @@
  */
 package net.kappabyte.kappaengine.util;
 
+import java.util.HashMap;
+
 /**
  *
  * @author 903336001
  */
 public final class Profiling {
-    
-    private static long startTime = 0;
-    
+
+    private static HashMap<String, Long> startTime = new HashMap<>();
+
     private static long threshold = 20;
-    
-    public static void startTimer() {
-        startTime = System.currentTimeMillis();
+
+    public static void startTimer(String timerName) {
+        startTime.remove(timerName);
+        startTime.put(timerName, System.currentTimeMillis());
     }
-    
-    public static long stopTimer(String name) {
-        long currentTime = System.currentTimeMillis();
-        long diff = currentTime - startTime;
+
+    public static long stopTimer(String timerName) {
+        long diff = System.currentTimeMillis() - startTime.remove(timerName);
         if(diff > threshold) {
-            Log.debug(name + " | Time taken " + diff + "ms.");
+            Log.debug(timerName + " | Time taken " + diff + "ms.");
         }
         return diff;
     }

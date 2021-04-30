@@ -4,11 +4,8 @@ import java.nio.FloatBuffer;
 import java.util.HashMap;
 
 import org.joml.Matrix4f;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
-import org.lwjgl.opengl.GL30;
 
 import net.kappabyte.kappaengine.util.Log;
 
@@ -83,7 +80,10 @@ public class ShaderProgram {
     }
 
     public void setUniform(String uniformName, Matrix4f value) {
-        if(!uniforms.containsKey(uniformName)) return;
+        if(!uniforms.containsKey(uniformName)) {
+            Log.warn("Attempted to set a uniform value for a uniform that has not been created!");
+            return;
+        }
         FloatBuffer fb = MemoryUtil.memAllocFloat(16);
         value.get(fb);
         GL30.glUniformMatrix4fv(uniforms.get(uniformName), false, fb);
@@ -91,7 +91,18 @@ public class ShaderProgram {
     }
 
     public void setUniform(String uniformName, int value) {
-        if(!uniforms.containsKey(uniformName)) return;
+        if(!uniforms.containsKey(uniformName)) {
+            Log.warn("Attempted to set a uniform value for a uniform that has not been created!");
+            return;
+        }
         GL30.glUniform1i(uniforms.get(uniformName), value);
+    }
+
+    public void setUniform(String uniformName, float x, float y, float z) {
+        if(!uniforms.containsKey(uniformName)) {
+            Log.warn("Attempted to set a uniform value for a uniform that has not been created!");
+            return;
+        }
+        GL30.glUniform3f(uniforms.get(uniformName), x, y, z);
     }
 }

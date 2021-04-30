@@ -1,12 +1,12 @@
 package net.kappabyte.kappaengine.scenes;
 
-import net.kappabyte.kappaengine.scenes.components.Camera;
+import org.joml.Matrix3f;
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Quaternionfc;
 import org.joml.Vector3f;
 
-public class Transform {
+import net.kappabyte.kappaengine.scenes.components.Component;
+
+public class Transform extends Component {
     private Vector3f position;
     private Vector3f rotation;
     private Vector3f scale;
@@ -24,6 +24,15 @@ public class Transform {
         return position;
     }
 
+    public Vector3f addPositionLocal(Vector3f positionDelta) {
+        Matrix3f rotationMatrix = new Matrix3f();
+        rotationMatrix.identity();
+        rotationMatrix.rotateXYZ((float) -Math.toRadians(rotation.x), (float) -Math.toRadians(rotation.y), (float) Math.toRadians(rotation.z));
+        positionDelta.mul(rotationMatrix);
+        position.add(positionDelta);
+        return position;
+    }
+
     public Vector3f addRotation(Vector3f rotationDelta) {
         rotation.add(rotationDelta.x % 360, rotationDelta.y % 360, rotationDelta.z % 360);
         return rotation;
@@ -34,16 +43,46 @@ public class Transform {
         return scale;
     }
 
-    public Vector3f getPosition() {
+    public Vector3f getPositionLocal() {
         return position;
     }
 
-    public Vector3f getRotation() {
+    public Vector3f getPosition() {
+        GameObject parent = getGameObject().getParentGameObject();
+
+        if(parent == null) {
+            return getPositionLocal();
+        }
+
+        return new Vector3f(parent.getTransform().getPosition()).add(position);
+    }
+
+    public Vector3f getRotationLocal() {
         return rotation;
     }
 
-    public Vector3f getScale() {
+    public Vector3f getRotation() {
+        GameObject parent = getGameObject().getParentGameObject();
+
+        if(parent == null) {
+            return getRotationLocal();
+        }
+
+        return new Vector3f(parent.getTransform().getRotation()).add(rotation);
+    }
+
+    public Vector3f getScaleLocal() {
         return scale;
+    }
+
+    public Vector3f getScale() {
+        GameObject parent = getGameObject().getParentGameObject();
+
+        if(parent == null) {
+            return getScaleLocal();
+        }
+
+        return new Vector3f(parent.getTransform().getScale()).mul(scale);
     }
 
     public void setPosition(Vector3f position) {
@@ -59,8 +98,21 @@ public class Transform {
     }
 
     public Matrix4f getModelViewMatrix(Matrix4f viewMatrix) {
-        modelViewMatrix.identity().translate(position).rotateXYZ(rotation.x, rotation.y, rotation.z).scale(scale);
-        
+        Vector3f rotation = getRotation();
+        modelViewMatrix.identity().translate(getPosition()).rotateXYZ((float) Math.toRadians(rotation.x), (float) Math.toRadians(rotation.y), (float) Math.toRadians(rotation.z)).scale(getScale());
+
         return new Matrix4f(viewMatrix).mul(modelViewMatrix);
+    }
+
+    @Override
+    public void onStart() {
+    }
+
+    @Override
+    public void onUpdate() {
+    }
+
+    @Override
+    public void onDestroy() {
     }
 }

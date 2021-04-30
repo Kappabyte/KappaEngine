@@ -1,28 +1,45 @@
 package net.kappabyte.kappaengine.window;
 
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
+import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
+import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
+import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
+import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
+import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
+import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
+import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
+import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
+import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
+import static org.lwjgl.glfw.GLFW.glfwShowWindow;
+import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
+import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
+import static org.lwjgl.glfw.GLFW.glfwWindowHint;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
-import java.nio.FloatBuffer;
+import java.lang.reflect.Field;
 import java.nio.IntBuffer;
 import java.util.Collection;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GLCapabilities;
-import org.lwjgl.system.MemoryUtil;
 
-import net.kappabyte.kappaengine.graphics.RenderData;
+import net.kappabyte.kappaengine.input.InputManager;
 import net.kappabyte.kappaengine.math.Time;
 import net.kappabyte.kappaengine.scenes.GameObject;
 import net.kappabyte.kappaengine.scenes.Scene;
 import net.kappabyte.kappaengine.scenes.components.Component;
 import net.kappabyte.kappaengine.scenes.components.Renderable;
-import net.kappabyte.kappaengine.scenes.components.Camera;
 import net.kappabyte.kappaengine.util.Log;
 
 public abstract class Window {
@@ -32,12 +49,15 @@ public abstract class Window {
 
     private Scene scene;
 
+    private InputManager inputManager;
+
     private GLCapabilities capabilities;
 
     public Window(String title) {
         this.title = title;
 
         initalizeWindow();
+        inputManager = new InputManager(this);
     }
 
     int width = 300;
@@ -68,6 +88,10 @@ public abstract class Window {
 		glfwShowWindow(handle);
     }
 
+    public final InputManager getInputManager() {
+        return inputManager;
+    }
+
     public final void update() {
         //Log.info("Window Update");
         if(capabilities != null) {
@@ -76,6 +100,8 @@ public abstract class Window {
             capabilities = GL.createCapabilities();
             onWindowReady();
         }
+        GLFW.glfwMakeContextCurrent(handle);
+
         IntBuffer width = BufferUtils.createIntBuffer(1);
         IntBuffer height = BufferUtils.createIntBuffer(1);
         glfwGetWindowSize(handle, width, height);
@@ -126,6 +152,8 @@ public abstract class Window {
         for(Renderable renderable : sceneRenderables) {
             renderable.Render();
         }
+
+        getInputManager().update();
     }
 
     public final void closeWindow() {
@@ -134,7 +162,11 @@ public abstract class Window {
     }
 
     public final void setScene(Scene scene) {
+        if(this.scene != null) {
+            setSceneWindow(this.scene, null);
+        }
         this.scene = scene;
+        setSceneWindow(scene, this);
         onSceneChange();
     }
 
@@ -148,5 +180,15 @@ public abstract class Window {
     }
     public final long getHandle() {
         return handle;
+    }
+
+    private void setSceneWindow(Scene scene, Window window) {
+        try {
+            Field field = scene.getClass().getDeclaredField("window");
+            field.setAccessible(true);
+            field.set(scene, window);
+        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 }

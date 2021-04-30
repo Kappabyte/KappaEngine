@@ -50,6 +50,8 @@ public abstract class Material {
         FloatBuffer buffer = MemoryUtil.memAllocFloat(data.length);
         buffer.put(data).flip();
 
+        Log.debug(data.toString());
+
         GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, materialVBOs.get(index));
         GL30.glBufferData(GL30.GL_ARRAY_BUFFER, buffer, GL30.GL_STATIC_DRAW);
         MemoryUtil.memFree(buffer);
