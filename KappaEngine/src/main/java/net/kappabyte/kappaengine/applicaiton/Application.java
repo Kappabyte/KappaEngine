@@ -1,7 +1,5 @@
 package net.kappabyte.kappaengine.applicaiton;
 
-import net.kappabyte.kappaengine.graphics.materials.RainbowMaterial;
-import net.kappabyte.kappaengine.util.Log;
 import net.kappabyte.kappaengine.window.WindowManager;
 
 public abstract class Application {

@@ -1,7 +1,6 @@
 package net.kappabyte.kappaengine.graphics.materials;
 
 import net.kappabyte.kappaengine.graphics.FragmentShader;
-import net.kappabyte.kappaengine.graphics.RenderData;
 import net.kappabyte.kappaengine.graphics.ShaderProgram;
 import net.kappabyte.kappaengine.graphics.Texture;
 import net.kappabyte.kappaengine.graphics.VertexShader;

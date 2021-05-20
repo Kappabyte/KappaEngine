@@ -33,6 +33,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLCapabilities;
+import org.lwjgl.opengl.GLUtil;
 
 import net.kappabyte.kappaengine.input.InputManager;
 import net.kappabyte.kappaengine.math.Time;
@@ -127,8 +128,24 @@ public abstract class Window {
                 component.onUpdate();
             }
         }
+        /*
+        GL46.glEnable(GL46.GL_DEBUG_OUTPUT);
+        GL46.glDebugMessageCallback((source, type, id, severity, length, messagePointer, userParam) -> {
+            String message = MemoryUtil.memUTF8(messagePointer);
+            if(type == GL46.GL_DEBUG_TYPE_ERROR) {
+                Log.fatal("Open GL error: " + message);
+                Log.stack();
+            } else if(type == GL46.GL_DEBUG_TYPE_PERFORMANCE) {
+                Log.debug("Open GL performance: " + message);
+            }
+        }, 0);*/
+        GLUtil.setupDebugMessageCallback();
 
 		glfwSwapBuffers(handle); // swap the color buffers
+
+        GLFW.glfwSetErrorCallback((errorCode, handle) -> {
+            Log.error("Open Gl Error: " + errorCode);
+        });
 
 		// Poll for window events. The key callback above will only be
 		// invoked during this call.

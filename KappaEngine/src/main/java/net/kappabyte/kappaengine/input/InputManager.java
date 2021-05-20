@@ -12,7 +12,6 @@ public class InputManager {
 
     private Window window;
 
-    private Vector2d prevMouseLocation;
     private Vector2d mouseLocation;
     private Vector2d mouseDelta;
 
@@ -25,7 +24,6 @@ public class InputManager {
     public InputManager(Window window) {
         this.window = window;
 
-        prevMouseLocation = new Vector2d(0.5, 0.5);
         mouseLocation = new Vector2d(0.5, 0.5);
 
         GLFW.glfwSetCursorPosCallback(window.getHandle(), (handle, x, y) -> {

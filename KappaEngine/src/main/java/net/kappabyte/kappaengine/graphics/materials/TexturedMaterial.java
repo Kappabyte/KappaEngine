@@ -1,14 +1,9 @@
 package net.kappabyte.kappaengine.graphics.materials;
 
-import java.nio.FloatBuffer;
-
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.system.MemoryUtil;
 
 import net.kappabyte.kappaengine.graphics.RenderData;
-import net.kappabyte.kappaengine.graphics.ShaderProgram;
 import net.kappabyte.kappaengine.graphics.Texture;
-import net.kappabyte.kappaengine.util.Log;
 
 public abstract class TexturedMaterial extends Material {
 

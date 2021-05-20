@@ -3,14 +3,13 @@ package net.kappabyte.kappaengine.scenes.components;
 import net.kappabyte.kappaengine.graphics.Mesh;
 import net.kappabyte.kappaengine.graphics.RenderData;
 import net.kappabyte.kappaengine.graphics.materials.Material;
-import net.kappabyte.kappaengine.scenes.GameObject;
 
 public class CubeRender extends Renderable {
 
     private Mesh mesh;
 
-    public CubeRender(GameObject gameObject, Material material) {
-        super(gameObject, material, true);
+    public CubeRender(Material material) {
+        super(material, true);
 
         float[] positions = new float[]{
             -1, -1, -1,

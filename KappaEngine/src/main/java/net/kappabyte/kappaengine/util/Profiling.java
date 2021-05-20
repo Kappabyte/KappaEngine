@@ -15,18 +15,15 @@ public final class Profiling {
 
     private static HashMap<String, Long> startTime = new HashMap<>();
 
-    private static long threshold = 20;
-
     public static void startTimer(String timerName) {
         startTime.remove(timerName);
+        Log.debug(timerName + "> Started!");
         startTime.put(timerName, System.currentTimeMillis());
     }
 
     public static long stopTimer(String timerName) {
         long diff = System.currentTimeMillis() - startTime.remove(timerName);
-        if(diff > threshold) {
-            Log.debug(timerName + " | Time taken " + diff + "ms.");
-        }
+        Log.debug(timerName + "> Time taken " + diff + "ms.");
         return diff;
     }
 }

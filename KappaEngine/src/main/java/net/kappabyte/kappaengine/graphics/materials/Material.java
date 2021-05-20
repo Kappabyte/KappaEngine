@@ -30,13 +30,13 @@ public abstract class Material {
 
     public final void enableVertexAttribArrays() {
         for(int i = 0; i < materialVBOs.size(); i++) {
-            GL20.glEnableVertexAttribArray(i + 1);
+            GL20.glEnableVertexAttribArray(i + 2);
         }
     }
 
     public final void disableVertexAttribArrays() {
         for(int i = 0; i < materialVBOs.size(); i++) {
-            GL20.glDisableVertexAttribArray(i + 1);
+            GL20.glDisableVertexAttribArray(i + 2);
         }
     }
 
@@ -55,7 +55,7 @@ public abstract class Material {
         GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, materialVBOs.get(index));
         GL30.glBufferData(GL30.GL_ARRAY_BUFFER, buffer, GL30.GL_STATIC_DRAW);
         MemoryUtil.memFree(buffer);
-        GL30.glVertexAttribPointer(index + 1, 3, GL30.GL_FLOAT, false, 0, 0);
+        GL30.glVertexAttribPointer(index + 2, 3, GL30.GL_FLOAT, false, 0, 0);
     }
 
     protected final void fillVBODataFloat(float[] data, int index, int dimentions) {
@@ -65,6 +65,6 @@ public abstract class Material {
         GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, materialVBOs.get(index));
         GL30.glBufferData(GL30.GL_ARRAY_BUFFER, buffer, GL30.GL_STATIC_DRAW);
         MemoryUtil.memFree(buffer);
-        GL30.glVertexAttribPointer(index + 1, dimentions, GL30.GL_FLOAT, false, 0, 0);
+        GL30.glVertexAttribPointer(index + 2, dimentions, GL30.GL_FLOAT, false, 0, 0);
     }
 }
