@@ -7,10 +7,6 @@ package net.kappabyte.kappaengine.util;
 
 import java.util.HashMap;
 
-/**
- *
- * @author 903336001
- */
 public final class Profiling {
 
     private static HashMap<String, Long> startTime = new HashMap<>();
