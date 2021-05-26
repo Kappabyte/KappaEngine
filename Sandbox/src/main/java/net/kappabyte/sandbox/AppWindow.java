@@ -40,7 +40,7 @@ public class AppWindow extends Window {
 
     private void test() {
         GameObject cubeA = new GameObject("Cube A");
-        cubeA.addComponent(new CubeRender(new UnitTexturedMaterial(new Texture("cube_texture.png"))));
+        cubeA.addComponent(new MeshRender(ModelLoader.loadOBJModel("example_textured_cube.obj"), new UnitTexturedMaterial(new Texture("cube_texture.png")), true));
         cubeA.addComponent(new Spin(1));
         //object.add(new CubeRender(object, new RainbowMaterial()));
         getScene().addGameObject(cubeA);

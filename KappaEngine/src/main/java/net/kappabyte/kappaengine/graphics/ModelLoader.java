@@ -7,6 +7,8 @@ import java.util.Scanner;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
+import net.kappabyte.kappaengine.util.Log;
+
 public final class ModelLoader {
     public static Mesh loadOBJModel(String fileName) {
         Scanner reader = new Scanner(ModelLoader.class.getResourceAsStream("/" + fileName));
@@ -74,7 +76,7 @@ public final class ModelLoader {
             group.indexPos = Integer.parseInt(tokens[0]) - 1;
             if(length > 1) {
                 String textCoord = tokens[1];
-                group.indexUV = textCoord.length() > 0 ? Integer.parseInt(textCoord) : -1;
+                group.indexUV = textCoord.length() > 0 ? Integer.parseInt(textCoord) - 1 : -1;
                 if(length > 2) {
                     group.indexNormal = Integer.parseInt(tokens[2]) - 1;
                 }
@@ -116,18 +118,20 @@ public final class ModelLoader {
 
     private static void processFaceVertex(IndexGroup index, List<Vector2f> textureCoords, List<Vector3f> normals, List<Integer> indices, float[] textureCoordsArr, float[] normalsArr) {
         int positionIndex = index.indexPos;
+        Log.debug("" + positionIndex);
         indices.add(positionIndex);
 
-        if(index.indexUV >= 0) {
-            Vector2f textureCoord = textureCoords.get(index.indexUV);
-            textureCoordsArr[positionIndex * 2] = textureCoord.x;
-            textureCoordsArr[positionIndex * 2 + 1] = 1 - textureCoord.y;
+        if (index.indexUV >= 0) {
+            Vector2f textCoord = textureCoords.get(index.indexUV);
+            textureCoordsArr[positionIndex * 2] = textCoord.x;
+            textureCoordsArr[positionIndex * 2 + 1] = 1 - textCoord.y;
         }
-        if(index.indexNormal >= 0) {
-            Vector3f normal = normals.get(index.indexNormal);
-            normalsArr[positionIndex * 2] = normal.x;
-            normalsArr[positionIndex * 2 + 1] = normal.y;
-            normalsArr[positionIndex * 2 + 1] = normal.z;
+        if (index.indexNormal >= 0) {
+            // Reorder vectornormals
+            Vector3f vecNorm = normals.get(index.indexNormal);
+            normalsArr[positionIndex * 3] = vecNorm.x;
+            normalsArr[positionIndex * 3 + 1] = vecNorm.y;
+            normalsArr[positionIndex * 3 + 2] = vecNorm.z;
         }
     }
 }

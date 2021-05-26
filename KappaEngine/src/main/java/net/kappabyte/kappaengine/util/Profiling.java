@@ -13,7 +13,6 @@ public final class Profiling {
 
     public static void startTimer(String timerName) {
         startTime.remove(timerName);
-        Log.debug(timerName + "> Started!");
         startTime.put(timerName, System.currentTimeMillis());
     }
 
