@@ -15,7 +15,6 @@ public class RainbowMaterial extends Material {
     }
 
     public RainbowMaterial() {
-        createVBO();
     }
 
     static float hue = 0f; //hue

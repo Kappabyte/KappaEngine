@@ -12,7 +12,7 @@ public abstract class TexturedMaterial extends Material {
     public TexturedMaterial(Texture texture) {
         this.texture = texture;
 
-        createVBO(); //Creates vbo for textureCoords
+        createVBO("texCoord"); //Creates vbo for textureCoords
 
         getShaderProgram().createUniform("texture_sampler");
     }
@@ -20,7 +20,7 @@ public abstract class TexturedMaterial extends Material {
 	@Override
 	public void setRenderData(RenderData data) {
         getShaderProgram().setUniform("texture_sampler", 0);
-        fillVBODataFloat(data.getMesh().getUVs(), 0, 2);
+        fillVBODataFloat(data.getMesh().getUVs(), "texCoord", 2);
 	}
 
     public void setTexture(Texture texture) {

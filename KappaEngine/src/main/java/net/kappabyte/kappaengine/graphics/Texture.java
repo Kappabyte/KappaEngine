@@ -41,6 +41,21 @@ public class Texture {
 		}
     }
 
+    public Texture(ByteBuffer buf, int width, int height) {
+        texture = GL30.glGenTextures();
+        GL30.glBindTexture(GL30.GL_TEXTURE_2D, texture);
+        GL30.glPixelStorei(GL30.GL_UNPACK_ALIGNMENT, 1);
+
+        GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MIN_FILTER, GL30.GL_NEAREST);
+        GL30.glTexParameteri(GL30.GL_TEXTURE_2D, GL30.GL_TEXTURE_MAG_FILTER, GL30.GL_NEAREST);
+
+        Log.debug("Loading Raw Texture");
+        GL30.glTexImage2D(GL30.GL_TEXTURE_2D, 0, GL30.GL_RGBA, width, height, 0, GL30.GL_RGBA, GL30.GL_UNSIGNED_BYTE, buf);
+
+        GL30.glGenerateMipmap(GL30.GL_TEXTURE_2D);
+        Log.debug("Loaded Raw Texture");
+    }
+
     public String getAssetName() {
         return assetName;
     }
