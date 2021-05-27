@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 
+import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.system.MemoryUtil;
@@ -18,6 +19,8 @@ public class TextureAtlas {
 
     private HashMap<String, AtlasTexture> textures = new HashMap<>();
 
+    int width, height;
+
     public TextureAtlas() {
 
     }
@@ -26,6 +29,9 @@ public class TextureAtlas {
         PNGDecoder decoder;
 
         int atlasSize = (int) Math.ceil(Math.sqrt(textureAssets.length));
+
+        width = textureWidth * atlasSize;
+        height = textureHeight * atlasSize;
 
         textures.clear();
 
@@ -41,7 +47,7 @@ public class TextureAtlas {
                 }
 
                 ByteBuffer textureData = ByteBuffer.allocateDirect(4 * textureWidth * textureHeight);
-                decoder.decode(textureData, 0, Format.RGBA);
+                decoder.decode(textureData, 4 * textureWidth, Format.RGBA);
                 textureData.flip();
                 textures.put(textureAssets[i].assetName, new AtlasTexture(textureData, new Vector2i(atlasX * textureWidth, atlasY * textureHeight), new Vector2i(atlasX * textureWidth + textureWidth, atlasY * textureHeight + textureHeight), textureAssets[i].assetName));
             } catch (IOException e) {
@@ -49,13 +55,7 @@ public class TextureAtlas {
             }
         }
 
-        ByteBuffer atlas = ByteBuffer.allocateDirect(4 * atlasSize * textureWidth * atlasSize * textureHeight);
-        while(atlas.hasRemaining()) {
-            atlas.put((byte) 0);
-        }
-        atlas.flip();
-        Log.debug("Generating texture...");
-        texture = new Texture(atlas, atlasSize * textureWidth, atlasSize * textureHeight);
+        texture = new Texture(null, atlasSize * textureWidth, atlasSize * textureHeight);
         GL30.glBindTexture(GL30.GL_TEXTURE0, texture.getGlTextureID());
         GL30.glActiveTexture(texture.getGlTextureID());
         //Add subtextures
@@ -70,6 +70,18 @@ public class TextureAtlas {
         return texture;
     }
 
+    public AtlasTexture getAtlasTexture(String name) {
+        return textures.get(name);
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
     public static class AtlasTexture {
         Vector2i start, end;
         String name;
@@ -80,6 +92,20 @@ public class TextureAtlas {
             this.start = start;
             this.end = end;
             this.name = name;
+        }
+
+        public Vector2f[] getUVs(int totalWidth, int totalHeight) {
+            float x1 = (float)start.x / (float)totalWidth;
+            float y1 = (float)start.y / (float)totalHeight;
+            float x2 = (float)end.x / (float)totalWidth;
+            float y2 = (float)end.y / (float)totalHeight;
+
+            return new Vector2f[] {
+                new Vector2f(x2, y2),
+                new Vector2f(x1, y2),
+                new Vector2f(x2, y1),
+                new Vector2f(x1, y1),
+            };
         }
     }
 }

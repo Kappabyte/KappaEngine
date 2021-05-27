@@ -118,6 +118,7 @@ public abstract class Renderable extends Component {
         //Draw the stuff
         GL30.glBindBuffer(GL30.GL_ELEMENT_ARRAY_BUFFER, indicesVBO);
         GL30.glFrontFace(GL30.GL_CW);
+        GL30.glEnable(GL30.GL_CULL_FACE);
         GL30.glEnable(GL30.GL_DEPTH_TEST);
         GL30.glDrawElements(GL30.GL_TRIANGLES, data.getMesh().getIndicies().length, GL30.GL_UNSIGNED_INT, 0);
 
