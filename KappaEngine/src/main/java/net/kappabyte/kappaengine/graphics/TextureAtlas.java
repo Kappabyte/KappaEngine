@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 
 import org.joml.Vector2i;
+import org.lwjgl.opengl.GL30;
 import org.lwjgl.system.MemoryUtil;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
@@ -21,13 +22,10 @@ public class TextureAtlas {
 
     }
 
-    public TextureAtlas setTextures(NamedAsset... textureAssets) {
+    public TextureAtlas setTextures(int textureWidth, int textureHeight, NamedAsset... textureAssets) {
         PNGDecoder decoder;
 
         int atlasSize = (int) Math.ceil(Math.sqrt(textureAssets.length));
-
-        int totalWidth = 0;
-        int totalHeight = 0;
 
         textures.clear();
 
@@ -37,32 +35,34 @@ public class TextureAtlas {
             try {
                 decoder = new PNGDecoder(TextureAtlas.class.getResourceAsStream("/" + textureAssets[i].assetURL));
 
-                ByteBuffer textureData = ByteBuffer.allocateDirect(4 * decoder.getWidth() * decoder.getHeight());
+                if(decoder.getWidth() != textureWidth || decoder.getHeight() != textureHeight) {
+                    Log.error("Tried to add a texture to an atlas that does not conform to the atlas size!");
+                    continue;
+                }
+
+                ByteBuffer textureData = ByteBuffer.allocateDirect(4 * textureWidth * textureHeight);
                 decoder.decode(textureData, 0, Format.RGBA);
                 textureData.flip();
-                textures.put(textureAssets[i].assetName, new AtlasTexture(textureData, new Vector2i(atlasX * decoder.getWidth(), atlasY * decoder.getHeight()), new Vector2i(atlasX * decoder.getWidth() + decoder.getWidth(), atlasY * decoder.getHeight() + decoder.getHeight()), textureAssets[i].assetName));
-
-                totalWidth += decoder.getWidth();
-                totalHeight += decoder.getHeight();
+                textures.put(textureAssets[i].assetName, new AtlasTexture(textureData, new Vector2i(atlasX * textureWidth, atlasY * textureHeight), new Vector2i(atlasX * textureWidth + textureWidth, atlasY * textureHeight + textureHeight), textureAssets[i].assetName));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        ByteBuffer atlas = ByteBuffer.allocateDirect(4 * totalWidth * totalHeight);
-        int offset = 0;
-        for(AtlasTexture texture : textures.values()) {
-            atlas.put(texture.data);
-            offset += texture.data.capacity();
-        }
+        ByteBuffer atlas = ByteBuffer.allocateDirect(4 * atlasSize * textureWidth * atlasSize * textureHeight);
         while(atlas.hasRemaining()) {
             atlas.put((byte) 0);
         }
         atlas.flip();
         Log.debug("Generating texture...");
-        AtlasTexture test = textures.get("grass_block_side");
-        texture = new Texture(atlas, totalWidth, totalHeight);
-
+        texture = new Texture(atlas, atlasSize * textureWidth, atlasSize * textureHeight);
+        GL30.glBindTexture(GL30.GL_TEXTURE0, texture.getGlTextureID());
+        GL30.glActiveTexture(texture.getGlTextureID());
+        //Add subtextures
+        for(AtlasTexture texture : textures.values()) {
+            GL30.glTexSubImage2D(GL30.GL_TEXTURE_2D, 0, texture.start.x, texture.start.y, texture.end.x - texture.start.x, texture.end.y - texture.start.y, GL30.GL_RGBA, GL30.GL_UNSIGNED_BYTE, texture.data);
+        }
+        //GL30.glGenerateMipmap(GL30.GL_TEXTURE_2D);
         return this;
     }
 
