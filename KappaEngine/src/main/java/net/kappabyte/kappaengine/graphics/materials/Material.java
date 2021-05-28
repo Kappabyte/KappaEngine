@@ -57,7 +57,6 @@ public abstract class Material {
         GL30.glBufferData(GL30.GL_ARRAY_BUFFER, buffer, GL30.GL_STATIC_DRAW);
         MemoryUtil.memFree(buffer);
         int location = GL30.glGetAttribLocation(getShaderProgram().getProgramID(), name);
-        Log.info("VBO location: " + location);
         GL30.glVertexAttribPointer(location, 3, GL30.GL_FLOAT, false, 0, 0);
     }
 
@@ -69,7 +68,6 @@ public abstract class Material {
         GL30.glBufferData(GL30.GL_ARRAY_BUFFER, buffer, GL30.GL_STATIC_DRAW);
         MemoryUtil.memFree(buffer);
         int location = GL30.glGetAttribLocation(getShaderProgram().getProgramID(), name);
-        Log.info("VBO location: " + location);
         GL30.glVertexAttribPointer(location, dimentions, GL30.GL_FLOAT, false, 0, 0);
     }
 }

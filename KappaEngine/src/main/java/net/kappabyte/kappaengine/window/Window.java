@@ -32,8 +32,10 @@ import java.util.Collection;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL46;
 import org.lwjgl.opengl.GLCapabilities;
 import org.lwjgl.opengl.GLUtil;
+import org.lwjgl.system.MemoryUtil;
 
 import net.kappabyte.kappaengine.input.InputManager;
 import net.kappabyte.kappaengine.math.Time;
@@ -128,7 +130,7 @@ public abstract class Window {
                 component.onUpdate();
             }
         }
-        /*
+
         GL46.glEnable(GL46.GL_DEBUG_OUTPUT);
         GL46.glDebugMessageCallback((source, type, id, severity, length, messagePointer, userParam) -> {
             String message = MemoryUtil.memUTF8(messagePointer);
@@ -138,8 +140,7 @@ public abstract class Window {
             } else if(type == GL46.GL_DEBUG_TYPE_PERFORMANCE) {
                 Log.debug("Open GL performance: " + message);
             }
-        }, 0);*/
-        GLUtil.setupDebugMessageCallback();
+        }, 0);
 
 		glfwSwapBuffers(handle); // swap the color buffers
 

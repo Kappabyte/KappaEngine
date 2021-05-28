@@ -99,7 +99,7 @@ public abstract class Renderable extends Component {
         data.getShaderProgram().bind();
 
         //Update the data to be rendered
-        if(staticGeometry) {
+        if(!staticGeometry) {
             updateVBOs(data);
         }
 
