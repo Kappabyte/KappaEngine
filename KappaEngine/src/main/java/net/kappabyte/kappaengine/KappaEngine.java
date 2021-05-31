@@ -67,6 +67,6 @@ public final class KappaEngine {
         } else {
             int dot = version.indexOf(".");
             if(dot != -1) { version = version.substring(0, dot); }
-        } return Integer.parseInt(version);
+        } return Integer.parseInt(version.split("-")[0]);
     }
 }
