@@ -1,15 +1,15 @@
 package net.kappabyte.kappaengine.physics;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.joml.Vector3f;
 
-import net.kappabyte.kappaengine.input.InputManager.Input;
 import net.kappabyte.kappaengine.math.Time;
 import net.kappabyte.kappaengine.scenes.components.Component;
 import net.kappabyte.kappaengine.util.Log;
 
-public class Rigidbody extends Component {
+public class Rigidbody extends AABBCollider {
 
     public ArrayList<Vector3f> forces = new ArrayList<Vector3f>();
     public Vector3f velocity = new Vector3f(0, 0, 0);
@@ -18,6 +18,7 @@ public class Rigidbody extends Component {
     public float gravity = -9.81f;
 
     public Rigidbody(float mass) {
+        super(new Vector3f(-0.5f, 0, -0.5f), new Vector3f(0.5f, 2, 0.5f));
         this.mass = mass;
     }
 
@@ -39,19 +40,20 @@ public class Rigidbody extends Component {
         float time = Time.deltaTime();
         Log.info("Time: " + time);
 
-        //Get net force acting on object
+        // Get net force acting on object
         Vector3f netForce = new Vector3f();
-        for(Vector3f force : forces) {
+        for (Vector3f force : forces) {
             netForce.add(force);
         }
         netForce.add(0, gravity * mass, 0);
 
-        //Get acceleration of the object
+        // Get acceleration of the object
         // F = ma
         Vector3f acceleration = netForce.div(mass);
         Log.info("Acceleration: " + acceleration);
-        //Calculate displacement
-        Vector3f displacement = new Vector3f(velocity).mul(time).add(new Vector3f(acceleration).mul(0.5f).mul(time * time));
+        // Calculate displacement
+        Vector3f displacement = new Vector3f(velocity).mul(time)
+                .add(new Vector3f(acceleration).mul(0.5f).mul(time * time));
         getTransform().addPosition(displacement);
 
         // Get final velocity

@@ -15,8 +15,8 @@ import net.kappabyte.kappaengine.util.Profiling;
 
 public abstract class Renderable extends Component {
 
-    private int vao, verticesVBO, indicesVBO, normalsVBO = 0;
-    private boolean staticGeometry = false;
+    protected int vao, verticesVBO, indicesVBO, normalsVBO = 0;
+    protected boolean staticGeometry = false;
 
     protected Material material;
 
@@ -37,6 +37,8 @@ public abstract class Renderable extends Component {
         //Create the vao - stores a bunch of vbos
         vao = GL30.glGenVertexArrays();
         Log.debug("VAO generated and bound!");
+
+        GL30.glEnable(GL30.GL_CULL_FACE);
 
         //Init uniform variables
         //VBOs is a memory buffer of the GPU which stores vertex information. We create the buffer, bind it so we can use it, set the data and free the memory used by our data as we no longer need it.
@@ -118,7 +120,6 @@ public abstract class Renderable extends Component {
         //Draw the stuff
         GL30.glBindBuffer(GL30.GL_ELEMENT_ARRAY_BUFFER, indicesVBO);
         GL30.glFrontFace(GL30.GL_CW);
-        GL30.glEnable(GL30.GL_CULL_FACE);
         GL30.glEnable(GL30.GL_DEPTH_TEST);
         GL30.glDrawElements(GL30.GL_TRIANGLES, data.getMesh().getIndicies().length, GL30.GL_UNSIGNED_INT, 0);
 

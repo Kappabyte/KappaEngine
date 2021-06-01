@@ -17,7 +17,7 @@ public class RainbowMaterial extends Material {
     public RainbowMaterial() {
     }
 
-    static float hue = 0f; //hue
+    float hue = 0f; //hue
 
     @Override
     public void setRenderData(RenderData data) {

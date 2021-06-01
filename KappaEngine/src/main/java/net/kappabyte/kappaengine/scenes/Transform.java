@@ -104,6 +104,12 @@ public class Transform extends Component {
         return new Matrix4f(viewMatrix).mul(modelViewMatrix);
     }
 
+    public Matrix4f getModelViewMatrixNoRotation(Matrix4f viewMatrix) {
+        modelViewMatrix.identity().translate(getPosition()).scale(getScale());
+
+        return new Matrix4f(viewMatrix).mul(modelViewMatrix);
+    }
+
     @Override
     public void onStart() {
     }
