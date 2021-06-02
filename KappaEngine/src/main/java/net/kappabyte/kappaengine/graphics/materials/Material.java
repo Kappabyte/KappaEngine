@@ -1,7 +1,6 @@
 package net.kappabyte.kappaengine.graphics.materials;
 
 import java.nio.FloatBuffer;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.lwjgl.opengl.GL20;

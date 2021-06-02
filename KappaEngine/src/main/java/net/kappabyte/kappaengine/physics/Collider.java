@@ -9,23 +9,22 @@ import org.lwjgl.opengl.GL30;
 import net.kappabyte.kappaengine.graphics.Mesh;
 import net.kappabyte.kappaengine.graphics.RenderData;
 import net.kappabyte.kappaengine.graphics.materials.RainbowMaterial;
-import net.kappabyte.kappaengine.physics.AABBCollider;
 import net.kappabyte.kappaengine.scenes.components.Renderable;
+import net.kappabyte.kappaengine.util.Log;
 
 public abstract class Collider extends Renderable {
 
     private static ArrayList<Collider> colliders = new ArrayList<Collider>();
 
-    private Mesh debugMesh;
+    protected Mesh debugMesh;
 
     public Collider() {
-        super(new RainbowMaterial(), true);
-
-        debugMesh = generateDebugMesh();
+        super(new RainbowMaterial(), false);
     }
 
     public abstract boolean isColliding();
     public abstract List<Collider> getCollisions();
+    public abstract List<Collider> getCollisionsAtOffset(Vector3f offset);
 
     public abstract Mesh generateDebugMesh();
 
@@ -57,6 +56,7 @@ public abstract class Collider extends Renderable {
 
     @Override
     public void Render() {
+        if(this instanceof Rigidbody) Log.info("Drawing Rigidbody!");
         GL30.glPolygonMode(GL30.GL_FRONT_AND_BACK, GL30.GL_LINE);
         GL30.glDisable(GL30.GL_CULL_FACE);
         //Get the render data and bind the shader

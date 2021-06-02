@@ -28,6 +28,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 import java.lang.reflect.Field;
 import java.nio.IntBuffer;
 import java.util.Collection;
+import java.util.Scanner;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
@@ -38,6 +39,7 @@ import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.system.MemoryUtil;
 
 import net.kappabyte.kappaengine.input.InputManager;
+import net.kappabyte.kappaengine.input.InputManager.Input;
 import net.kappabyte.kappaengine.math.Time;
 import net.kappabyte.kappaengine.scenes.GameObject;
 import net.kappabyte.kappaengine.scenes.Scene;
@@ -96,6 +98,7 @@ public abstract class Window {
     }
 
     public final void update() {
+
         //Log.info("Window Update");
         if(capabilities != null) {
             GL.setCapabilities(capabilities);
@@ -104,6 +107,8 @@ public abstract class Window {
             onWindowReady();
         }
         GLFW.glfwMakeContextCurrent(handle);
+
+
 
         IntBuffer width = BufferUtils.createIntBuffer(1);
         IntBuffer height = BufferUtils.createIntBuffer(1);
@@ -123,6 +128,14 @@ public abstract class Window {
 
         if(scene != null) {
             Render();
+        }
+
+        if(getInputManager().held(Input.KEYBOARD_L)) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         for(GameObject object : scene.gameObjects) {
@@ -151,6 +164,8 @@ public abstract class Window {
 		// Poll for window events. The key callback above will only be
 		// invoked during this call.
 		glfwPollEvents();
+
+
     }
 
     protected abstract void onSceneChange();

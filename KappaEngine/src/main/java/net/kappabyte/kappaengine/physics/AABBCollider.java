@@ -4,12 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.joml.Vector3f;
-import org.lwjgl.opengl.GL30;
 
 import net.kappabyte.kappaengine.graphics.Mesh;
-import net.kappabyte.kappaengine.graphics.RenderData;
-import net.kappabyte.kappaengine.graphics.materials.RainbowMaterial;
-import net.kappabyte.kappaengine.scenes.components.Renderable;
 
 public class AABBCollider extends Collider {
 
@@ -19,6 +15,8 @@ public class AABBCollider extends Collider {
     public AABBCollider(Vector3f min, Vector3f max) {
         this.min = min;
         this.max = max;
+
+        debugMesh = generateDebugMesh();
     }
 
     @Override
@@ -55,17 +53,22 @@ public class AABBCollider extends Collider {
 
     @Override
     public List<Collider> getCollisions() {
+        return getCollisionsAtOffset(new Vector3f());
+    }
+
+    @Override
+    public List<Collider> getCollisionsAtOffset(Vector3f offset) {
         List<Collider> collisions = new ArrayList<Collider>();
         for (Collider other : getAllColliders()) {
             if (other == this)
                 continue;
             if(!(other instanceof AABBCollider)) continue;
             AABBCollider otherAABB = (AABBCollider) other;
-            if ((getMinAbsolute().x <= otherAABB.getMaxAbsolute().x && getMaxAbsolute().x >= otherAABB.getMinAbsolute().x)
-                    && (getMinAbsolute().y <= otherAABB.getMaxAbsolute().y
-                            && getMaxAbsolute().y >= otherAABB.getMinAbsolute().y)
-                    && (getMinAbsolute().z <= otherAABB.getMaxAbsolute().z
-                            && getMaxAbsolute().z >= otherAABB.getMinAbsolute().z))
+            if ((getMinAbsolute().x + offset.x <= otherAABB.getMaxAbsolute().x && getMaxAbsolute().x + offset.x >= otherAABB.getMinAbsolute().x)
+                    && (getMinAbsolute().y + offset.y <= otherAABB.getMaxAbsolute().y
+                            && getMaxAbsolute().y + offset.y >= otherAABB.getMinAbsolute().y)
+                    && (getMinAbsolute().z + offset.z <= otherAABB.getMaxAbsolute().z
+                            && getMaxAbsolute().z + offset.z >= otherAABB.getMinAbsolute().z))
                 collisions.add(other);
         }
         return collisions;
