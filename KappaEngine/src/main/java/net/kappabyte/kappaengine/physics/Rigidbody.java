@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.joml.Vector3f;
 
 import net.kappabyte.kappaengine.math.Time;
-import net.kappabyte.kappaengine.util.Log;
 
 public class Rigidbody extends AABBCollider {
 
@@ -63,26 +62,50 @@ public class Rigidbody extends AABBCollider {
                 .sub(new Vector3f(acceleration).mul(0.5f).mul(time * time));
 
         //Collision Detection
-        Log.info("Player: " + getMinAbsolute().y);
-        Log.info("Target: " + (getMinAbsolute().y + displacement.y));
-        for(Collider collider : getCollisionsAtOffset(displacement)) {
+        for(Collider collider : getCollisions()) {
             if(!(collider instanceof AABBCollider)) return;
             AABBCollider other = (AABBCollider) collider;
-            if(getMinAbsolute().x + displacement.x <= other.getMaxAbsolute().x && getMaxAbsolute().x + displacement.x >= other.getMinAbsolute().x) {
-                displacement.x = 0;
-                velocity.x = 0;
+            if((getMinAbsolute().x + displacement.x < other.getMaxAbsolute().x && getMaxAbsolute().x + displacement.x > other.getMaxAbsolute().x)
+                && (getMinAbsolute().y + displacement.y < other.getMaxAbsolute().y && getMaxAbsolute().y + displacement.y > other.getMinAbsolute().y)
+                && (getMinAbsolute().z + displacement.z < other.getMaxAbsolute().z && getMaxAbsolute().z + displacement.z > other.getMinAbsolute().z)) {
+                    displacement.x += other.getMaxAbsolute().x - (getMinAbsolute().x + displacement.x);
             }
-            if(getMinAbsolute().y + displacement.y <= other.getMaxAbsolute().y && getMaxAbsolute().y + displacement.y >= other.getMinAbsolute().y) {
-                displacement.y = 0;
-                velocity.y = 0;
+            //+y
+            if((getMinAbsolute().x + displacement.x < other.getMaxAbsolute().x && getMaxAbsolute().x + displacement.x > other.getMinAbsolute().x)
+                && (getMinAbsolute().y + displacement.y < other.getMaxAbsolute().y && getMaxAbsolute().y + displacement.y > other.getMaxAbsolute().y)
+                && (getMinAbsolute().z + displacement.z < other.getMaxAbsolute().z && getMaxAbsolute().z + displacement.z > other.getMinAbsolute().z)) {
+                    displacement.y += other.getMaxAbsolute().y - (getMinAbsolute().y + displacement.y);
             }
-            if(getMinAbsolute().z + displacement.z <= other.getMaxAbsolute().z && getMaxAbsolute().z + displacement.z >= other.getMinAbsolute().z) {
-                displacement.z = 0;
-                velocity.z = 0;
+            //+z
+            if((getMinAbsolute().x + displacement.x < other.getMaxAbsolute().x && getMaxAbsolute().x + displacement.x > other.getMinAbsolute().x)
+                && (getMinAbsolute().y + displacement.y < other.getMaxAbsolute().y && getMaxAbsolute().y + displacement.y > other.getMinAbsolute().y)
+                && (getMinAbsolute().z + displacement.z < other.getMaxAbsolute().z && getMaxAbsolute().z + displacement.z > other.getMaxAbsolute().z)) {
+                    displacement.z += other.getMaxAbsolute().z - (getMinAbsolute().z + displacement.z);
             }
-            Log.info("Chunk: " + other.getMaxAbsolute().y);
+            // -x face
+            if((getMinAbsolute().x + displacement.x < other.getMinAbsolute().x && getMaxAbsolute().x + displacement.x > other.getMinAbsolute().x)
+                && (getMinAbsolute().y + displacement.y < other.getMaxAbsolute().y && getMaxAbsolute().y + displacement.y > other.getMinAbsolute().y)
+                && (getMinAbsolute().z + displacement.z < other.getMaxAbsolute().z && getMaxAbsolute().z + displacement.z > other.getMinAbsolute().z)) {
+                    displacement.x += other.getMinAbsolute().x - (getMaxAbsolute().x + displacement.x);
+            }
+            //-y
+            if((getMinAbsolute().x + displacement.x < other.getMaxAbsolute().x && getMaxAbsolute().x + displacement.x > other.getMinAbsolute().x)
+                && (getMinAbsolute().y + displacement.y < other.getMinAbsolute().y && getMaxAbsolute().y + displacement.y > other.getMinAbsolute().y)
+                && (getMinAbsolute().z + displacement.z < other.getMaxAbsolute().z && getMaxAbsolute().z + displacement.z > other.getMinAbsolute().z)) {
+                    displacement.y += other.getMinAbsolute().y - (getMaxAbsolute().y + displacement.y);
+            }
+            //-z
+            if((getMinAbsolute().x + displacement.x < other.getMaxAbsolute().x && getMaxAbsolute().x + displacement.x > other.getMinAbsolute().x)
+                && (getMinAbsolute().y + displacement.y < other.getMaxAbsolute().y && getMaxAbsolute().y + displacement.y > other.getMinAbsolute().y)
+                && (getMinAbsolute().z + displacement.z < other.getMinAbsolute().z && getMaxAbsolute().z + displacement.z > other.getMinAbsolute().z)) {
+                    displacement.z += other.getMinAbsolute().z - (getMaxAbsolute().z + displacement.z);
+            }
         }
         getTransform().addPosition(displacement);
+    }
+
+    public void reactToCollision(AABBCollider other, Vector3f displacement) {
+
     }
 
     @Override

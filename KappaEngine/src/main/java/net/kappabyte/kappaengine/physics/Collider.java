@@ -56,7 +56,6 @@ public abstract class Collider extends Renderable {
 
     @Override
     public void Render() {
-        if(this instanceof Rigidbody) Log.info("Drawing Rigidbody!");
         GL30.glPolygonMode(GL30.GL_FRONT_AND_BACK, GL30.GL_LINE);
         GL30.glDisable(GL30.GL_CULL_FACE);
         //Get the render data and bind the shader
