@@ -24,7 +24,8 @@ public abstract class Collider extends Renderable {
 
     public abstract boolean isColliding();
     public abstract List<Collider> getCollisions();
-    public abstract List<Collider> getCollisionsAtOffset(Vector3f offset);
+    public abstract List<Collider> getCollisions(List<Collider> colliders);
+    public abstract List<Collider> getCollisions(Vector3f offset, List<Collider> colliders);
 
     public abstract Mesh generateDebugMesh();
 

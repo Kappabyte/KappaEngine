@@ -53,13 +53,18 @@ public class AABBCollider extends Collider {
 
     @Override
     public List<Collider> getCollisions() {
-        return getCollisionsAtOffset(new Vector3f());
+        return getCollisions(new Vector3f(), getAllColliders());
     }
 
     @Override
-    public List<Collider> getCollisionsAtOffset(Vector3f offset) {
+    public List<Collider> getCollisions(List<Collider> colliders) {
+        return getCollisions(new Vector3f(), colliders);
+    }
+
+    @Override
+    public List<Collider> getCollisions(Vector3f offset, List<Collider> colliders) {
         List<Collider> collisions = new ArrayList<Collider>();
-        for (Collider other : getAllColliders()) {
+        for (Collider other : colliders) {
             if (other == this)
                 continue;
             if(!(other instanceof AABBCollider)) continue;
@@ -88,5 +93,9 @@ public class AABBCollider extends Collider {
 
     public Vector3f getMax() {
         return max;
+    }
+
+    public Vector3f getSize() {
+        return new Vector3f(max).sub(min);
     }
 }
