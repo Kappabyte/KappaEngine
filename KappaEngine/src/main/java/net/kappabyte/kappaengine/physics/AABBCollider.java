@@ -6,6 +6,7 @@ import java.util.List;
 import org.joml.Vector3f;
 
 import net.kappabyte.kappaengine.graphics.Mesh;
+import net.kappabyte.kappaengine.util.Log;
 
 public class AABBCollider extends Collider {
 
@@ -69,11 +70,15 @@ public class AABBCollider extends Collider {
                 continue;
             if(!(other instanceof AABBCollider)) continue;
             AABBCollider otherAABB = (AABBCollider) other;
-            if ((getMinAbsolute().x + offset.x <= otherAABB.getMaxAbsolute().x && getMaxAbsolute().x + offset.x >= otherAABB.getMinAbsolute().x)
-                    && (getMinAbsolute().y + offset.y <= otherAABB.getMaxAbsolute().y
-                            && getMaxAbsolute().y + offset.y >= otherAABB.getMinAbsolute().y)
-                    && (getMinAbsolute().z + offset.z <= otherAABB.getMaxAbsolute().z
-                            && getMaxAbsolute().z + offset.z >= otherAABB.getMinAbsolute().z))
+            Vector3f thisMin = getMinAbsolute();
+            Vector3f thisMax = getMaxAbsolute();
+            Vector3f otherMin = otherAABB.getMinAbsolute();
+            Vector3f otherMax = otherAABB.getMaxAbsolute();
+            if ((thisMin.x + offset.x <= otherMax.x && thisMax.x + offset.x >= otherMin.x)
+                    && (thisMin.y + offset.y <= otherMax.y
+                            && thisMax.y + offset.y >= otherMin.y)
+                    && (thisMin.z + offset.z <= otherMax.z
+                            && thisMax.z + offset.z >= otherMin.z))
                 collisions.add(other);
         }
         return collisions;

@@ -27,6 +27,10 @@ public abstract class Renderable extends Component {
         this.staticGeometry = staticGeometry;
     }
 
+    public boolean shouldRender() {
+        return true;
+    }
+
     protected abstract RenderData supplyRenderData();
 
     public void Init() {
@@ -159,7 +163,7 @@ public abstract class Renderable extends Component {
     }
 
     public void onUpdate() {
-        //Do nothing
+        // Render();
     }
 
     public void onDestroy() {

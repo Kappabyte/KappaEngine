@@ -18,7 +18,7 @@ public final class Profiling {
 
     public static long stopTimer(String timerName) {
         long diff = System.currentTimeMillis() - startTime.remove(timerName);
-        Log.debug(timerName + "> Time taken " + diff + "ms.");
+        //Log.debug(timerName + "> Time taken " + diff + "ms.");
         return diff;
     }
 }

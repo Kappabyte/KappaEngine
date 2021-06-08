@@ -21,6 +21,7 @@ public class Rigidbody extends AABBCollider {
     public Rigidbody(float mass) {
         super(new Vector3f(-0.5f, 0, -0.5f), new Vector3f(0.5f, 2, 0.5f));
         this.mass = mass;
+        debugEnabled = true;
     }
 
     public void applyForce(Vector3f force) {
@@ -41,8 +42,14 @@ public class Rigidbody extends AABBCollider {
     }
 
     @Override
+    public List<Collider> getCollisions() {
+        return super.getCollisions(colliderSupplier.get());
+    }
+
+    @Override
     public void onUpdate() {
         super.onUpdate();
+        Render();
         float time = Time.deltaTime();
 
         // Get net force acting on object
@@ -53,7 +60,7 @@ public class Rigidbody extends AABBCollider {
         }
         forces.removeIf(force -> force.time <= 0);
 
-        netForce.add(0, gravity * mass, 0);
+        // netForce.add(0, gravity * mass, 0);
 
         // Get acceleration of the object
         // F = ma
@@ -82,52 +89,56 @@ public class Rigidbody extends AABBCollider {
         reactToCollision(other, displacement, new Vector3f());
     }
     public void reactToCollision(AABBCollider other, Vector3f displacement, Vector3f velocity) {
-        //Log.warn("Displacement: " + displacement);
+        Log.info("Other:" + other);
         //+x
-        if((getMinAbsolute().x + displacement.x < other.getMaxAbsolute().x && getMaxAbsolute().x + displacement.x > other.getMaxAbsolute().x)
-                && (getMinAbsolute().y + displacement.y < other.getMaxAbsolute().y - getSize().y/2 && getMaxAbsolute().y + displacement.y > other.getMinAbsolute().y + getSize().y/2)
-                && (getMinAbsolute().z + displacement.z < other.getMaxAbsolute().z - getSize().z/2 && getMaxAbsolute().z + displacement.z > other.getMinAbsolute().z + getSize().z/2)) {
-                    displacement.x += other.getMaxAbsolute().x - (getMinAbsolute().x + displacement.x);
+        Vector3f thisMin = getMinAbsolute();
+        Vector3f thisMax = getMaxAbsolute();
+        Vector3f otherMin = other.getMinAbsolute();
+        Vector3f otherMax = other.getMaxAbsolute();
+        if((thisMin.x + displacement.x < otherMax.x && thisMax.x + displacement.x > otherMax.x)
+                && (thisMin.y + displacement.y < otherMax.y - getSize().y/2 && thisMax.y + displacement.y > otherMin.y + getSize().y/2)
+                && (thisMin.z + displacement.z < otherMax.z - getSize().z/2 && thisMax.z + displacement.z > otherMin.z + getSize().z/2)) {
+                    displacement.x += otherMax.x - (thisMin.x + displacement.x);
                     velocity.x = 0;
                     Log.info("+x");
             }
             //+z
-            if((getMinAbsolute().x + displacement.x < other.getMaxAbsolute().x - getSize().x/2 && getMaxAbsolute().x + displacement.x > other.getMinAbsolute().x + getSize().x/2)
-                && (getMinAbsolute().y + displacement.y < other.getMaxAbsolute().y - getSize().y/2 && getMaxAbsolute().y + displacement.y > other.getMinAbsolute().y + getSize().y/2)
-                && (getMinAbsolute().z + displacement.z < other.getMaxAbsolute().z && getMaxAbsolute().z + displacement.z > other.getMaxAbsolute().z)) {
-                    displacement.z += other.getMaxAbsolute().z - (getMinAbsolute().z + displacement.z);
+            if((thisMin.x + displacement.x < otherMax.x - getSize().x/2 && thisMax.x + displacement.x > otherMin.x + getSize().x/2)
+                && (thisMin.y + displacement.y < otherMax.y - getSize().y/2 && thisMax.y + displacement.y > otherMin.y + getSize().y/2)
+                && (thisMin.z + displacement.z < otherMax.z && thisMax.z + displacement.z > otherMax.z)) {
+                    displacement.z += otherMax.z - (thisMin.z + displacement.z);
                     velocity.z = 0;
                     Log.info("+z");
             }
             // -x face
-            if((getMinAbsolute().x + displacement.x < other.getMinAbsolute().x && getMaxAbsolute().x + displacement.x > other.getMinAbsolute().x)
-                && (getMinAbsolute().y + displacement.y < other.getMaxAbsolute().y - getSize().y/2 && getMaxAbsolute().y + displacement.y > other.getMinAbsolute().y + getSize().y/2)
-                && (getMinAbsolute().z + displacement.z < other.getMaxAbsolute().z - getSize().z/2 && getMaxAbsolute().z + displacement.z > other.getMinAbsolute().z + getSize().z/2)) {
-                    displacement.x += other.getMinAbsolute().x - (getMaxAbsolute().x + displacement.x);
+            if((thisMin.x + displacement.x < otherMin.x && thisMax.x + displacement.x > otherMin.x)
+                && (thisMin.y + displacement.y < otherMax.y - getSize().y/2 && thisMax.y + displacement.y > otherMin.y + getSize().y/2)
+                && (thisMin.z + displacement.z < otherMax.z - getSize().z/2 && thisMax.z + displacement.z > otherMin.z + getSize().z/2)) {
+                    displacement.x += otherMin.x - (thisMax.x + displacement.x);
                     velocity.x = 0;
                     Log.info("-x");
             }
             //-z
-            if((getMinAbsolute().x + displacement.x < other.getMaxAbsolute().x - getSize().x/2 && getMaxAbsolute().x + displacement.x > other.getMinAbsolute().x - getSize().x/2)
-                && (getMinAbsolute().y + displacement.y < other.getMaxAbsolute().y - getSize().y/2 && getMaxAbsolute().y + displacement.y > other.getMinAbsolute().y - getSize().y/2)
-                && (getMinAbsolute().z + displacement.z < other.getMinAbsolute().z && getMaxAbsolute().z + displacement.z > other.getMinAbsolute().z)) {
-                    displacement.z += other.getMinAbsolute().z - (getMaxAbsolute().z + displacement.z);
+            if((thisMin.x + displacement.x < otherMax.x - getSize().x/2 && thisMax.x + displacement.x > otherMin.x - getSize().x/2)
+                && (thisMin.y + displacement.y < otherMax.y - getSize().y/2 && thisMax.y + displacement.y > otherMin.y - getSize().y/2)
+                && (thisMin.z + displacement.z < otherMin.z && thisMax.z + displacement.z > otherMin.z)) {
+                    displacement.z += otherMin.z - (thisMax.z + displacement.z);
                     velocity.z = 0;
                     Log.info("-z");
             }
             //+y
-            if((getMinAbsolute().x + displacement.x < other.getMaxAbsolute().x - getSize().x/2 && getMaxAbsolute().x + displacement.x > other.getMinAbsolute().x + getSize().x/2)
-                && (getMinAbsolute().y + displacement.y < other.getMaxAbsolute().y && getMaxAbsolute().y + displacement.y > other.getMaxAbsolute().y)
-                && (getMinAbsolute().z + displacement.z < other.getMaxAbsolute().z - getSize().z/2 && getMaxAbsolute().z + displacement.z > other.getMinAbsolute().z + getSize().z/2)) {
-                    displacement.y += other.getMaxAbsolute().y - (getMinAbsolute().y + displacement.y);
+            if((thisMin.x + displacement.x < otherMax.x - getSize().x/2 && thisMax.x + displacement.x > otherMin.x + getSize().x/2)
+                && (thisMin.y + displacement.y < otherMax.y && thisMax.y + displacement.y > otherMax.y)
+                && (thisMin.z + displacement.z < otherMax.z - getSize().z/2 && thisMax.z + displacement.z > otherMin.z + getSize().z/2)) {
+                    displacement.y += otherMax.y - (thisMin.y + displacement.y);
                     velocity.y = 0;
                     Log.info("+y");
             }
             //-y
-            if((getMinAbsolute().x + displacement.x < other.getMaxAbsolute().x - getSize().x/2 && getMaxAbsolute().x + displacement.x > other.getMinAbsolute().x + getSize().x/2)
-                && (getMinAbsolute().y + displacement.y < other.getMinAbsolute().y && getMaxAbsolute().y + displacement.y > other.getMinAbsolute().y)
-                && (getMinAbsolute().z + displacement.z < other.getMaxAbsolute().z - getSize().z/2 && getMaxAbsolute().z + displacement.z > other.getMinAbsolute().z + getSize().z/2)) {
-                    displacement.y += other.getMinAbsolute().y - (getMaxAbsolute().y + displacement.y);
+            if((thisMin.x + displacement.x < otherMax.x - getSize().x/2 && thisMax.x + displacement.x > otherMin.x + getSize().x/2)
+                && (thisMin.y + displacement.y < otherMin.y && thisMax.y + displacement.y > otherMin.y)
+                && (thisMin.z + displacement.z < otherMax.z - getSize().z/2 && thisMax.z + displacement.z > otherMin.z + getSize().z/2)) {
+                    displacement.y += otherMin.y - (thisMax.y + displacement.y);
                     velocity.y = 0;
                     Log.info("-y");
             }

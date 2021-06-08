@@ -14,6 +14,8 @@ import net.kappabyte.kappaengine.util.Log;
 
 public abstract class Collider extends Renderable {
 
+    public boolean debugEnabled = false;
+
     private static ArrayList<Collider> colliders = new ArrayList<Collider>();
 
     protected Mesh debugMesh;
@@ -34,9 +36,16 @@ public abstract class Collider extends Renderable {
     }
 
     @Override
+    public boolean shouldRender() {
+        return debugEnabled;
+    }
+
+    @Override
     public void onStart() {
         colliders.add(this);
-        super.onStart();
+        if(debugEnabled) {
+            super.onStart();
+        }
     }
 
     @Override
@@ -47,7 +56,9 @@ public abstract class Collider extends Renderable {
     @Override
     public void onDestroy() {
         colliders.remove(this);
-        super.onDestroy();
+        if(debugEnabled) {
+            super.onDestroy();
+        }
     }
 
     @Override

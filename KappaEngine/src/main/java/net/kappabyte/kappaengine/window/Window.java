@@ -130,14 +130,6 @@ public abstract class Window {
             Render();
         }
 
-        if(getInputManager().held(Input.KEYBOARD_L)) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
         for(GameObject object : scene.gameObjects) {
             for(Component component : object.GetComponents(Component.class)) {
                 component.onUpdate();
@@ -183,7 +175,9 @@ public abstract class Window {
         if(scene.getActiveCamera() == null) return;
         Collection<Renderable> sceneRenderables = scene.GetComponents(Renderable.class);
         for(Renderable renderable : sceneRenderables) {
-            renderable.Render();
+            if(renderable.shouldRender()) {
+                renderable.Render();
+            }
         }
 
         getInputManager().update();
