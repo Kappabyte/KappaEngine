@@ -16,7 +16,7 @@ public class Rigidbody extends AABBCollider {
     public Vector3f velocity = new Vector3f();
     public float mass = 1.0f;
 
-    public float maxVelocity = 5f;
+    public float terminalVelocity = 5f;
 
     public float gravity = -9.81f;
 
@@ -74,8 +74,8 @@ public class Rigidbody extends AABBCollider {
         // at + v1 = v2
         velocity.add(new Vector3f(acceleration).mul(time));
 
-        if(velocity.length() > maxVelocity) {
-            velocity.normalize(maxVelocity);
+        if(velocity.length() > terminalVelocity) {
+            velocity.normalize(terminalVelocity);
         }
 
         // Calculate displacement
@@ -95,7 +95,6 @@ public class Rigidbody extends AABBCollider {
         reactToCollision(other, displacement, new Vector3f());
     }
     public void reactToCollision(AABBCollider other, Vector3f displacement, Vector3f velocity) {
-        Log.info("Other:" + other);
         //+x
         Vector3f thisMin = getMinAbsolute();
         Vector3f thisMax = getMaxAbsolute();
