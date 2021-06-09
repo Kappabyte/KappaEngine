@@ -65,8 +65,8 @@ public abstract class Window {
         inputManager = new InputManager(this);
     }
 
-    int width = 300;
-    int height = 300;
+    int width = 1000;
+    int height = 700;
     protected final void initalizeWindow() {
         // Configure GLFW
 		glfwDefaultWindowHints(); // optional, the current window hints are already the default
@@ -74,7 +74,7 @@ public abstract class Window {
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
         // Create the window
-		handle = glfwCreateWindow(300, 300, title, NULL, NULL);
+		handle = glfwCreateWindow(width, height, title, NULL, NULL);
 		if ( handle == NULL )
 			throw new RuntimeException("Failed to create the GLFW window");
 

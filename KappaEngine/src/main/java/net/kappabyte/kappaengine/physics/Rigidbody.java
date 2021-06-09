@@ -16,6 +16,8 @@ public class Rigidbody extends AABBCollider {
     public Vector3f velocity = new Vector3f();
     public float mass = 1.0f;
 
+    public float maxVelocity = 5f;
+
     public float gravity = -9.81f;
 
     public Rigidbody(float mass) {
@@ -60,7 +62,7 @@ public class Rigidbody extends AABBCollider {
         }
         forces.removeIf(force -> force.time <= 0);
 
-        // netForce.add(0, gravity * mass, 0);
+        netForce.add(0, gravity * mass, 0);
 
         // Get acceleration of the object
         // F = ma
@@ -71,6 +73,10 @@ public class Rigidbody extends AABBCollider {
         // a = (v2 - v1)t
         // at + v1 = v2
         velocity.add(new Vector3f(acceleration).mul(time));
+
+        if(velocity.length() > maxVelocity) {
+            velocity.normalize(maxVelocity);
+        }
 
         // Calculate displacement
         Vector3f displacement = new Vector3f(velocity).mul(time)

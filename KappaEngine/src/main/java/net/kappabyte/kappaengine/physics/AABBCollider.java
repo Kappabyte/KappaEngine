@@ -75,11 +75,15 @@ public class AABBCollider extends Collider {
             Vector3f otherMin = otherAABB.getMinAbsolute();
             Vector3f otherMax = otherAABB.getMaxAbsolute();
             if ((thisMin.x + offset.x <= otherMax.x && thisMax.x + offset.x >= otherMin.x)
-                    && (thisMin.y + offset.y <= otherMax.y
-                            && thisMax.y + offset.y >= otherMin.y)
-                    && (thisMin.z + offset.z <= otherMax.z
-                            && thisMax.z + offset.z >= otherMin.z))
-                collisions.add(other);
+              && (thisMin.y + offset.y <= otherMax.y && thisMax.y + offset.y >= otherMin.y)
+              && (thisMin.z + offset.z <= otherMax.z && thisMax.z + offset.z >= otherMin.z)) {
+                    collisions.add(other);
+                    // Log.info("Found a collision");
+                } else {
+                    // Log.info("Collision doesn't match");
+                    // Log.info("Player: " + getTransform().getPosition());
+                    // Log.info("Other: " + otherAABB.getTransform().getPosition());
+                }
         }
         return collisions;
     }
@@ -102,5 +106,10 @@ public class AABBCollider extends Collider {
 
     public Vector3f getSize() {
         return new Vector3f(max).sub(min);
+    }
+
+    @Override
+    public String toString() {
+        return "Min: " + min + "(" + getMinAbsolute() + "), Max: " + max + "(" + getMaxAbsolute() + ")";
     }
 }
