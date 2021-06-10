@@ -20,25 +20,31 @@ public class Raycast {
         Vector4f ray_eye = ray_clip.mul(new Matrix4f(scene.getActiveCamera().getProjectionMatrix()).invert());
         ray_eye = new Vector4f(ray_eye.x, ray_eye.y, -1.0f, 0.0f);
 
-        ray_eye.mul(new Matrix4f(scene.getActiveCamera().getTransform().getModelViewMatrix(scene.getActiveCamera().getViewMatrix())).invert());
+        ray_eye.mul(new Matrix4f(scene.getActiveCamera().getViewMatrix()).invert());
         Vector3f ray = new Vector3f(ray_eye.x, ray_eye.y, ray_eye.z);
         ray.normalize();
 
+        float closestDistance = Float.POSITIVE_INFINITY;
+        Collider closestCollider = null;
         for(AABBCollider collider : scene.GetComponents(AABBCollider.class)) {
             if(Arrays.asList(ignore).contains(collider)) continue;
             if(collider.getTransform().getPosition().distance(scene.getActiveCamera().getTransform().getPosition()) > max_distance) {
                 continue;
             }
-
-            if(collidesWith(collider, ray, scene.getActiveCamera().getTransform().getPosition())) {
-                return new Ray(collider);
+            float distanceToHit = collidesWith(collider, ray, scene.getActiveCamera().getTransform().getPosition());
+            if(distanceToHit > 0 && closestDistance > distanceToHit) {
+                closestDistance = distanceToHit;
+                closestCollider = collider;
             }
         }
 
+        if(closestCollider != null) {
+            return new Ray(closestCollider, new Vector3f(scene.getActiveCamera().getTransform().getPosition()).add(new Vector3f(ray).mul(closestDistance)));
+        }
         return null;
     }
 
-    private static boolean collidesWith(AABBCollider other, Vector3f ray, Vector3f origin) {
+    private static float collidesWith(AABBCollider other, Vector3f ray, Vector3f origin) {
         Vector3f minAbs = other.getMinAbsolute();
         Vector3f maxAbs = other.getMaxAbsolute();
 
@@ -58,24 +64,73 @@ public class Raycast {
 
         // if tmax < 0, ray (line) is intersecting AABB, but the whole AABB is behind us
         if (tmax < 0) {
-            return false;
+            return -1f;
         }
         // if tmin > tmax, ray doesn't intersect AABB
         if (tmin > tmax) {
-            return false;
+            return -1f;
         }
-        return true;
+        return tmin;
     }
 
     public static class Ray {
-        Collider other;
+        Collider collider;
+        Vector3f point;
+        Vector3f normal;
 
-        public Ray(Collider other) {
-            this.other = other;
+        public Ray(Collider collider, Vector3f point) {
+            this.collider = collider;
+            this.point = point;
+            this.normal = calculateNormal(collider, point);
         }
 
         public Collider getCollider() {
-            return other;
+            return collider;
+        }
+
+        public Vector3f getHitPoint() {
+            return point;
+        }
+        public Vector3f getNormal() {
+            return normal;
+        }
+
+        private static Vector3f calculateNormal(Collider collider, Vector3f point) {
+            if(!(collider instanceof AABBCollider)) {
+                return new Vector3f();
+            }
+
+            Vector3f min = ((AABBCollider) collider).getMinAbsolute();
+            Vector3f max = ((AABBCollider) collider).getMaxAbsolute();
+
+            //+x
+            if(min.z <= point.z && max.z >= point.z && min.y <= point.y && max.y >= point.y && point.x == max.x) {
+                return new Vector3f(1, 0, 0);
+            }
+            //+y
+            if(min.x <= point.x && max.x >= point.x && min.z <= point.z && max.z >= point.z && point.y == max.y) {
+                return new Vector3f(0, 1, 0);
+            }
+            //+z
+            if(min.x <= point.x && max.x >= point.x && min.y <= point.y && max.y >= point.y && point.z == max.z) {
+                return new Vector3f(0, 0, 1);
+            }
+
+            //-x
+            if(min.z <= point.z && max.z >= point.z && min.y <= point.y && max.y >= point.y && point.x == min.x) {
+                return new Vector3f(-1, 0, 0);
+            }
+            //-y
+            if(min.x <= point.x && max.x >= point.x && min.z <= point.z && max.z >= point.z && point.y == min.y) {
+                return new Vector3f(0, -1, 0);
+            }
+            //-z
+            if(min.x <= point.x && max.x >= point.x && min.y <= point.y && max.y >= point.y && point.z == min.z) {
+                return new Vector3f(0, 0, -1);
+            }
+
+            //This should never happen
+            return new Vector3f(0,0,0);
         }
     }
 }
