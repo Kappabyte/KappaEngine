@@ -2,7 +2,7 @@ package net.kappabyte.kappaengine.math;
 
 public class Time {
 
-    static long lastFrame;
+    static long lastFrame = 0;
     static int fps;
     static long lastFPS;
     static float delta;
@@ -12,6 +12,7 @@ public class Time {
     }
 
     private static void updateDeltaTime() {
+        if(lastFrame == 0) lastFrame = getTime();
         long time = getTime();
         delta = (time - lastFrame) / 1000.0f;
         lastFrame = time;

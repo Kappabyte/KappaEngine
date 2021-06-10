@@ -21,7 +21,7 @@ public class Rigidbody extends AABBCollider {
     public float gravity = -9.81f;
 
     public Rigidbody(float mass) {
-        super(new Vector3f(-0.5f, 0, -0.5f), new Vector3f(0.5f, 2, 0.5f));
+        super(new Vector3f(-0.4f, 0, -0.4f), new Vector3f(0.4f, 1.9f, 0.4f));
         this.mass = mass;
         debugEnabled = true;
     }
@@ -81,7 +81,9 @@ public class Rigidbody extends AABBCollider {
         // Calculate displacement
         Vector3f displacement = new Vector3f(velocity).mul(time)
                 .sub(new Vector3f(acceleration).mul(0.5f).mul(time * time));
-
+        if(displacement.length() > terminalVelocity) {
+            displacement.normalize(terminalVelocity);
+        }
         //Collision Detection
         List<Collider> colliders = colliderSupplier.get();
         for(Collider collider : getCollisions(colliders)) {
@@ -105,7 +107,6 @@ public class Rigidbody extends AABBCollider {
                 && (thisMin.z + displacement.z < otherMax.z - getSize().z/2 && thisMax.z + displacement.z > otherMin.z + getSize().z/2)) {
                     displacement.x += otherMax.x - (thisMin.x + displacement.x);
                     velocity.x = 0;
-                    Log.info("+x");
             }
             //+z
             if((thisMin.x + displacement.x < otherMax.x - getSize().x/2 && thisMax.x + displacement.x > otherMin.x + getSize().x/2)
@@ -113,7 +114,6 @@ public class Rigidbody extends AABBCollider {
                 && (thisMin.z + displacement.z < otherMax.z && thisMax.z + displacement.z > otherMax.z)) {
                     displacement.z += otherMax.z - (thisMin.z + displacement.z);
                     velocity.z = 0;
-                    Log.info("+z");
             }
             // -x face
             if((thisMin.x + displacement.x < otherMin.x && thisMax.x + displacement.x > otherMin.x)
@@ -121,7 +121,6 @@ public class Rigidbody extends AABBCollider {
                 && (thisMin.z + displacement.z < otherMax.z - getSize().z/2 && thisMax.z + displacement.z > otherMin.z + getSize().z/2)) {
                     displacement.x += otherMin.x - (thisMax.x + displacement.x);
                     velocity.x = 0;
-                    Log.info("-x");
             }
             //-z
             if((thisMin.x + displacement.x < otherMax.x - getSize().x/2 && thisMax.x + displacement.x > otherMin.x - getSize().x/2)
@@ -129,7 +128,6 @@ public class Rigidbody extends AABBCollider {
                 && (thisMin.z + displacement.z < otherMin.z && thisMax.z + displacement.z > otherMin.z)) {
                     displacement.z += otherMin.z - (thisMax.z + displacement.z);
                     velocity.z = 0;
-                    Log.info("-z");
             }
             //+y
             if((thisMin.x + displacement.x < otherMax.x - getSize().x/2 && thisMax.x + displacement.x > otherMin.x + getSize().x/2)
@@ -137,7 +135,6 @@ public class Rigidbody extends AABBCollider {
                 && (thisMin.z + displacement.z < otherMax.z - getSize().z/2 && thisMax.z + displacement.z > otherMin.z + getSize().z/2)) {
                     displacement.y += otherMax.y - (thisMin.y + displacement.y);
                     velocity.y = 0;
-                    Log.info("+y");
             }
             //-y
             if((thisMin.x + displacement.x < otherMax.x - getSize().x/2 && thisMax.x + displacement.x > otherMin.x + getSize().x/2)
@@ -145,7 +142,6 @@ public class Rigidbody extends AABBCollider {
                 && (thisMin.z + displacement.z < otherMax.z - getSize().z/2 && thisMax.z + displacement.z > otherMin.z + getSize().z/2)) {
                     displacement.y += otherMin.y - (thisMax.y + displacement.y);
                     velocity.y = 0;
-                    Log.info("-y");
             }
     }
 
