@@ -4,6 +4,8 @@ import java.nio.FloatBuffer;
 import java.util.HashMap;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.system.MemoryUtil;
 
@@ -75,12 +77,14 @@ public class ShaderProgram {
             return;
         }
 
+        Log.debug("Registered uniform " + uniformName + " at location " + uniformLocation);
         uniforms.put(uniformName, uniformLocation);
     }
 
     public void setUniform(String uniformName, Matrix4f value) {
         if(!uniforms.containsKey(uniformName)) {
-            Log.warn("Attempted to set a uniform value for a uniform that has not been created!");
+            Log.warn("Attempted to set a uniform value for a uniform that has not been created (uniform: " + uniformName + ")!");
+            Log.stack();
             return;
         }
         FloatBuffer fb = MemoryUtil.memAllocFloat(16);
@@ -91,19 +95,36 @@ public class ShaderProgram {
 
     public void setUniform(String uniformName, int value) {
         if(!uniforms.containsKey(uniformName)) {
-            Log.warn("Attempted to set a uniform value for a uniform that has not been created!");
+            Log.warn("Attempted to set a uniform value for a uniform that has not been created (uniform: " + uniformName + ")!");
             return;
         }
         GL30.glUniform1i(uniforms.get(uniformName), value);
     }
 
+    public void setUniform(String uniformName, Vector3f value) {
+        setUniform(uniformName, value.x, value.y, value.z);
+    }
+
     public void setUniform(String uniformName, float x, float y, float z) {
         if(!uniforms.containsKey(uniformName)) {
-            Log.warn("Attempted to set a uniform value for a uniform that has not been created!");
+            Log.warn("Attempted to set a uniform value for a uniform that has not been created (uniform: " + uniformName + ")!");
             return;
         }
         GL30.glUniform3f(uniforms.get(uniformName), x, y, z);
     }
+
+    public void setUniform(String uniformName, Vector4f value) {
+        setUniform(uniformName, value.x, value.y, value.z, value.w);
+    }
+
+    public void setUniform(String uniformName, float x, float y, float z, float w) {
+        if(!uniforms.containsKey(uniformName)) {
+            Log.warn("Attempted to set a uniform value for a uniform that has not been created (uniform: " + uniformName + ")!");
+            return;
+        }
+        GL30.glUniform4f(uniforms.get(uniformName), x, y, z, w);
+    }
+
     public int getProgramID() {
         return programID;
     }

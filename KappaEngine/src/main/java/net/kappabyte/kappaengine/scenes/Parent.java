@@ -1,5 +1,5 @@
 package net.kappabyte.kappaengine.scenes;
 
-public interface Parent<T> {
-    public T[] getChildren();
+public interface Parent {
+    public GameObject[] getChildren();
 }

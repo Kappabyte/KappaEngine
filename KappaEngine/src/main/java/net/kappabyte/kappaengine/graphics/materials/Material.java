@@ -15,12 +15,6 @@ public abstract class Material {
 
     protected HashMap<String, Integer> materialVBOs = new HashMap<>();
 
-    public Material() {
-        if(this instanceof I3DMaterial) {
-            ((I3DMaterial) this).init3D(getShaderProgram());
-        }
-    }
-
     public abstract ShaderProgram getShaderProgram();
 
     /**

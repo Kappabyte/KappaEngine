@@ -11,18 +11,15 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 import java.lang.reflect.Field;
 import java.nio.IntBuffer;
 import java.util.Collection;
-import java.util.Scanner;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL46;
 import org.lwjgl.opengl.GLCapabilities;
-import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.system.MemoryUtil;
 
 import net.kappabyte.kappaengine.input.InputManager;
-import net.kappabyte.kappaengine.input.InputManager.Input;
 import net.kappabyte.kappaengine.math.Time;
 import net.kappabyte.kappaengine.scenes.GameObject;
 import net.kappabyte.kappaengine.scenes.Scene;
@@ -145,8 +142,6 @@ public abstract class Window {
 		glfwPollEvents();
 
         Time.update();
-
-
     }
 
     protected abstract void onSceneChange();
@@ -163,13 +158,15 @@ public abstract class Window {
     public final void Render() {
         if(scene.getActiveCamera() == null) return;
         Collection<Renderable> sceneRenderables = scene.GetComponents(Renderable.class);
+        Log.info("Rendering 3D Scene: " + sceneRenderables.size() + " objects.");
         for(Renderable renderable : sceneRenderables) {
             if(renderable.shouldRender()) {
                 renderable.Render();
             }
         }
 
-        Collection<UIRenderable> uiRenderables = scene.getCanvas().GetUIComponents(UIRenderable.class);
+        Collection<UIRenderable> uiRenderables = scene.GetComponents(UIRenderable.class);
+        Log.info("Rendering UI: " + uiRenderables.size() + " objects.");
         for(UIRenderable renderable : uiRenderables) {
             if(renderable.shouldRender()) {
                 renderable.Render();

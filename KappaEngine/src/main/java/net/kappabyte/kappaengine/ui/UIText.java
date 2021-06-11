@@ -52,22 +52,22 @@ public class UIText extends UIRenderable {
             int row = currentChar / font.getRows();
 
             // Top Left
-            vertices.add(new Vector3f((float)i * tileWidth, 0.0f, zIndex));
+            vertices.add(new Vector3f((float)i * tileWidth, 0.0f, 0.0f));
             uvs.add(new Vector2f((float) col / (float) font.getColumns()));
             uvs.add(new Vector2f((float) row / (float) font.getRows()));
 
             // Bottom Left
-            vertices.add(new Vector3f((float)i * tileWidth, tileHeight, zIndex));
+            vertices.add(new Vector3f((float)i * tileWidth, tileHeight, 0.0f));
             uvs.add(new Vector2f((float) col / (float) font.getColumns()));
             uvs.add(new Vector2f((float) (row + 1) / (float) font.getRows()));
 
             // Bottom Right
-            vertices.add(new Vector3f((float)i * tileWidth + tileWidth, tileHeight, zIndex));
+            vertices.add(new Vector3f((float)i * tileWidth + tileWidth, tileHeight, 0.0f));
             uvs.add(new Vector2f((float) (col + 1) / (float) font.getColumns()));
             uvs.add(new Vector2f((float) (row + 1) / (float) font.getRows()));
 
             // Top Right
-            vertices.add(new Vector3f((float)i * tileWidth + tileWidth, 0.0f, zIndex));
+            vertices.add(new Vector3f((float)i * tileWidth + tileWidth, 0.0f, 0.0f));
             uvs.add(new Vector2f((float) (col + 1) / (float) font.getColumns()));
             uvs.add(new Vector2f((float) row / (float) font.getRows()));
 
@@ -101,6 +101,6 @@ public class UIText extends UIRenderable {
 
     @Override
     protected RenderData supplyRenderData() {
-        return new RenderData(getTransform(), mesh, material, getUIObject());
+        return new RenderData(getTransform(), mesh, material, getGameObject());
     }
 }

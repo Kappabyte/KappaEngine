@@ -8,16 +8,15 @@ import org.lwjgl.system.MemoryUtil;
 
 import net.kappabyte.kappaengine.graphics.RenderData;
 import net.kappabyte.kappaengine.graphics.materials.Material;
+import net.kappabyte.kappaengine.scenes.components.Component;
 import net.kappabyte.kappaengine.util.Log;
 import net.kappabyte.kappaengine.util.Profiling;
 
 import static org.lwjgl.system.MemoryUtil.memFree;
 
-public abstract class UIRenderable extends UIComponent {
+public abstract class UIRenderable extends Component {
 
     int vao, verticesVBO, indicesVBO, normalsVBO;
-
-    float zIndex = 0;
 
     Material material;
 
@@ -25,7 +24,7 @@ public abstract class UIRenderable extends UIComponent {
         this.material  = material;
     }
 
-    public boolean ShouldRender() {
+    public boolean shouldRender() {
         return true;
     }
 
@@ -106,9 +105,6 @@ public abstract class UIRenderable extends UIComponent {
         updateVBOs(data);
 
         Profiling.startTimer("ke_internal:render");
-        //Update matrices
-        data.getShaderProgram().setUniform("modelViewMatrix", data.getTransform().getModelViewMatrix(data.getCamera().getViewMatrix()));
-        data.getShaderProgram().setUniform("projectionMatrix", data.getCamera().getProjectionMatrix());
         //Bind our vao (dont need to bind vbo, as it is stored in the vao)
         GL30.glBindVertexArray(vao);
         GL30.glEnableVertexAttribArray(0);
@@ -165,5 +161,4 @@ public abstract class UIRenderable extends UIComponent {
     public void onDestroy() {
         Cleanup();
     }
-
 }

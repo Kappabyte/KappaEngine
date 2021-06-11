@@ -1,6 +1,7 @@
 package net.kappabyte.kappaengine.scenes.components;
 
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import net.kappabyte.kappaengine.util.Log;
@@ -14,13 +15,14 @@ public class Camera extends Component {
 
     private Matrix4f viewMatrix = new Matrix4f();
 
-    private Matrix4f projectionMatrix;
+    private Matrix4f projectionMatrix, orthographicMatrix;
 
     private Window window;
 
     public Camera(Window window) {
         super();
         this.window = window;
+        orthographicMatrix = new Matrix4f();
         updateProjectionMatrix();
     }
 
@@ -56,6 +58,12 @@ public class Camera extends Component {
         viewMatrix.translate(new Vector3f(getTransform().getPosition()).mul(-1));
 
         return viewMatrix;
+    }
+
+    public Matrix4f getOrthographicMatrix(Vector2f min, Vector2f max) {
+        orthographicMatrix.identity();
+        orthographicMatrix.setOrtho2D(min.x, max.x, max.y, min.y);
+        return orthographicMatrix;
     }
 
 }
