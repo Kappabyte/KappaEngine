@@ -28,6 +28,7 @@ import net.kappabyte.kappaengine.scenes.GameObject;
 import net.kappabyte.kappaengine.scenes.Scene;
 import net.kappabyte.kappaengine.scenes.components.Component;
 import net.kappabyte.kappaengine.scenes.components.Renderable;
+import net.kappabyte.kappaengine.ui.UIRenderable;
 import net.kappabyte.kappaengine.util.Log;
 
 public abstract class Window {
@@ -72,10 +73,10 @@ public abstract class Window {
 		// Enable v-sync
 		glfwSwapInterval(1);
 
-        glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        if(glfwRawMouseMotionSupported()) {
-            glfwSetInputMode(handle, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
-        }
+        // glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        // if(glfwRawMouseMotionSupported()) {
+        //     glfwSetInputMode(handle, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+        // }
 
 		// Make the window visible
 		glfwShowWindow(handle);
@@ -163,6 +164,13 @@ public abstract class Window {
         if(scene.getActiveCamera() == null) return;
         Collection<Renderable> sceneRenderables = scene.GetComponents(Renderable.class);
         for(Renderable renderable : sceneRenderables) {
+            if(renderable.shouldRender()) {
+                renderable.Render();
+            }
+        }
+
+        Collection<UIRenderable> uiRenderables = scene.getCanvas().GetUIComponents(UIRenderable.class);
+        for(UIRenderable renderable : uiRenderables) {
             if(renderable.shouldRender()) {
                 renderable.Render();
             }

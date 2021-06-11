@@ -30,9 +30,6 @@ public class ShaderProgram {
         }
 
         link();
-
-        createUniform("projectionMatrix");
-        createUniform("modelViewMatrix");
     }
 
     public void link() {
@@ -69,6 +66,8 @@ public class ShaderProgram {
     }
 
     public void createUniform(String uniformName) {
+        if(uniforms.containsKey(uniformName)) return;
+
         int uniformLocation = GL30.glGetUniformLocation(programID, uniformName);
 
         if(uniformLocation < 0) {

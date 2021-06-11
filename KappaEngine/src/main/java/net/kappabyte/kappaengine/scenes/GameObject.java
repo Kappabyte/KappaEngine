@@ -9,14 +9,14 @@ import org.joml.Vector3f;
 import net.kappabyte.kappaengine.scenes.components.Component;
 import net.kappabyte.kappaengine.util.ReflectionUtil;
 
-public class GameObject implements Parent {
+public class GameObject implements Parent<GameObject> {
     private String name;
 
     private Transform transform;
     private ArrayList<Component> objectComponents = new ArrayList<>();
     private ArrayList<GameObject> children = new ArrayList<>();
 
-    private Parent parent;
+    private Parent<GameObject> parent;
 
     public GameObject(String name) {
         this.name = name;
@@ -109,7 +109,7 @@ public class GameObject implements Parent {
         return objectComponents.remove(o);
     }
 
-    public void setParent(Parent parent) {
+    public void setParent(Parent<GameObject> parent) {
         if(this.parent != null) {
             if(parent instanceof GameObject) {
                 ((GameObject) this.parent).children.remove(this);
@@ -130,7 +130,7 @@ public class GameObject implements Parent {
         child.setParent(this);
     }
 
-    public Parent getParent() {
+    public Parent<GameObject> getParent() {
         return parent;
     }
 

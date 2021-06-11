@@ -5,12 +5,12 @@ import net.kappabyte.kappaengine.graphics.RenderData;
 import net.kappabyte.kappaengine.graphics.ShaderProgram;
 import net.kappabyte.kappaengine.graphics.VertexShader;
 
-public class RainbowMaterial extends Material {
+public class RainbowMaterial extends Material implements I3DMaterial {
 
     static ShaderProgram program;
 
     static {
-        program = new ShaderProgram(new VertexShader(RainbowMaterial.class.getResourceAsStream("/rainbow.vert")), new FragmentShader(RainbowMaterial.class.getResourceAsStream("/rainbow.frag")));
+        program = new ShaderProgram(new VertexShader(RainbowMaterial.class.getResourceAsStream("assets/shaders/rainbow.vert")), new FragmentShader(RainbowMaterial.class.getResourceAsStream("assets/shaders/rainbow.frag")));
         program.createUniform("colour");
     }
 

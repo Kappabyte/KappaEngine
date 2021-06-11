@@ -13,6 +13,8 @@ public class Texture {
     String assetName;
     int texture;
 
+    int width, height;
+
     public Texture(String asset) {
         assetName = asset;
         PNGDecoder decoder = null;
@@ -23,6 +25,9 @@ public class Texture {
             ByteBuffer buf = ByteBuffer.allocateDirect(4 * decoder.getWidth() * decoder.getHeight());
             decoder.decode(buf, decoder.getWidth() * 4, Format.RGBA);
             buf.flip();
+
+            width = decoder.getWidth();
+            height = decoder.getHeight();
 
             texture = GL30.glGenTextures();
             GL30.glBindTexture(GL30.GL_TEXTURE_2D, texture);
@@ -42,6 +47,9 @@ public class Texture {
     }
 
     public Texture(ByteBuffer buf, int width, int height) {
+        this.width = width;
+        this.height = height;
+
         texture = GL30.glGenTextures();
         GL30.glBindTexture(GL30.GL_TEXTURE_2D, texture);
         GL30.glPixelStorei(GL30.GL_UNPACK_ALIGNMENT, 1);
@@ -62,5 +70,13 @@ public class Texture {
 
     public int getGlTextureID() {
         return texture;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }

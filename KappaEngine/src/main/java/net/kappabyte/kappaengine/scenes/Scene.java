@@ -6,14 +6,17 @@ import java.util.List;
 
 import net.kappabyte.kappaengine.scenes.components.Camera;
 import net.kappabyte.kappaengine.scenes.components.Component;
+import net.kappabyte.kappaengine.ui.Canvas;
 import net.kappabyte.kappaengine.util.Log;
 import net.kappabyte.kappaengine.util.ReflectionUtil;
 import net.kappabyte.kappaengine.window.Window;
-public class Scene implements Parent {
+public class Scene implements Parent<GameObject> {
 
     private Camera camera;
 
     private Window window;
+
+    private Canvas canvas = new Canvas();
 
     public ArrayList<GameObject> gameObjects = new ArrayList<>();
 
@@ -36,6 +39,10 @@ public class Scene implements Parent {
 
     public final Window getWindow() {
         return window;
+    }
+
+    public Canvas getCanvas() {
+        return canvas;
     }
 
     public void addGameObject(GameObject gameObject) {

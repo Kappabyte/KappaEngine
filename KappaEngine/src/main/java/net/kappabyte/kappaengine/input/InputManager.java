@@ -6,6 +6,7 @@ import java.util.HashMap;
 import org.joml.Vector2d;
 import org.lwjgl.glfw.GLFW;
 
+import net.kappabyte.kappaengine.util.Log;
 import net.kappabyte.kappaengine.window.Window;
 
 public class InputManager {
