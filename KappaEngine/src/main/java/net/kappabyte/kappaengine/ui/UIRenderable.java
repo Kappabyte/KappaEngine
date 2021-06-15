@@ -113,6 +113,8 @@ public abstract class UIRenderable extends Component {
         data.getMaterial().render(data);
         data.getMaterial().enableVertexAttribArrays();
 
+        Log.info("Rending UI Object");
+
         //Draw the stuff
         GL30.glBindBuffer(GL30.GL_ELEMENT_ARRAY_BUFFER, indicesVBO);
         GL30.glFrontFace(GL30.GL_CW);

@@ -1,6 +1,7 @@
 package net.kappabyte.kappaengine.ui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -9,6 +10,7 @@ import net.kappabyte.kappaengine.graphics.Font;
 import net.kappabyte.kappaengine.graphics.Mesh;
 import net.kappabyte.kappaengine.graphics.RenderData;
 import net.kappabyte.kappaengine.graphics.materials.UITextMaterial;
+import net.kappabyte.kappaengine.util.Log;
 
 public class UIText extends UIRenderable {
 
@@ -53,23 +55,19 @@ public class UIText extends UIRenderable {
 
             // Top Left
             vertices.add(new Vector3f((float)i * tileWidth, 0.0f, 0.0f));
-            uvs.add(new Vector2f((float) col / (float) font.getColumns()));
-            uvs.add(new Vector2f((float) row / (float) font.getRows()));
+            uvs.add(new Vector2f((float) col / (float) font.getColumns(), (float) row / (float) font.getRows()));
 
             // Bottom Left
             vertices.add(new Vector3f((float)i * tileWidth, tileHeight, 0.0f));
-            uvs.add(new Vector2f((float) col / (float) font.getColumns()));
-            uvs.add(new Vector2f((float) (row + 1) / (float) font.getRows()));
+            uvs.add(new Vector2f((float) col / (float) font.getColumns(), (float) (row + 1) / (float) font.getRows()));
 
             // Bottom Right
             vertices.add(new Vector3f((float)i * tileWidth + tileWidth, tileHeight, 0.0f));
-            uvs.add(new Vector2f((float) (col + 1) / (float) font.getColumns()));
-            uvs.add(new Vector2f((float) (row + 1) / (float) font.getRows()));
+            uvs.add(new Vector2f((float) (col + 1) / (float) font.getColumns(), (float) (row + 1) / (float) font.getRows()));
 
             // Top Right
             vertices.add(new Vector3f((float)i * tileWidth + tileWidth, 0.0f, 0.0f));
-            uvs.add(new Vector2f((float) (col + 1) / (float) font.getColumns()));
-            uvs.add(new Vector2f((float) row / (float) font.getRows()));
+            uvs.add(new Vector2f((float) (col + 1) / (float) font.getColumns(), (float) row / (float) font.getRows()));
 
             indices.add(i * 4);
             indices.add(i * 4 + 1);
@@ -88,7 +86,7 @@ public class UIText extends UIRenderable {
         }
 
         float[] uvArray = new float[uvs.size() * 2];
-        for(int i = 0; i < vertices.size(); i++) {
+        for(int i = 0; i < uvs.size(); i++) {
             Vector2f uv = uvs.get(i);
             uvArray[i * 2] = uv.x;
             uvArray[i * 2 + 1] = uv.y;

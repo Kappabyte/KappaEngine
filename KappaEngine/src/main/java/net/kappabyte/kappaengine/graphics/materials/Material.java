@@ -1,6 +1,7 @@
 package net.kappabyte.kappaengine.graphics.materials;
 
 import java.nio.FloatBuffer;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.lwjgl.opengl.GL20;
@@ -66,7 +67,10 @@ public abstract class Material {
         GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, materialVBOs.get(name));
         GL30.glBufferData(GL30.GL_ARRAY_BUFFER, buffer, GL30.GL_STATIC_DRAW);
         MemoryUtil.memFree(buffer);
+        Log.info("name: "+ name);
         int location = GL30.glGetAttribLocation(getShaderProgram().getProgramID(), name);
+        Log.info("Index: "+ location + ", MAX=" + GL30.GL_MAX_VERTEX_ATTRIBS);
+        Log.info("Size: "+ dimentions + ", MAX=" + GL30.GL_MAX_VERTEX_ATTRIBS);
         GL30.glVertexAttribPointer(location, dimentions, GL30.GL_FLOAT, false, 0, 0);
     }
 }
